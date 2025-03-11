@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS EXAMS (
     examId INTEGER PRIMARY KEY AUTOINCREMENT,
     examName TEXT NOT NULL UNIQUE,
     examDate DATETIME,
-    examProctorID INTEGER,
+    examProctorId INTEGER,
     maxSlots INTEGER DEFAULT 20,
     bookedSlots INTEGER DEFAULT 0,
     CHECK (bookedSlots <= maxSlots),
@@ -37,3 +37,19 @@ CREATE TABLE IF NOT EXISTS RESERVATIONS (
     FOREIGN KEY (studentId) REFERENCES STUDENTS(id),
     FOREIGN KEY (examId) REFERENCES EXAMS(examId)
 );
+
+CREATE TRIGGER IF NOT EXISTS addBookedSlot
+AFTER INSERT ON RESERVATIONS
+BEGIN
+    UPDATE EXAMS 
+    SET bookedSlots = bookedSlots + 1
+    WHERE examId = NEW.examId;
+END;
+
+CREATE TRIGGER IF NOT EXISTS deleteBookedSlot
+AFTER DELETE ON RESERVATIONS
+BEGIN
+    UPDATE EXAMS 
+    SET bookedSlots = bookedSlots - 1
+    WHERE examId = OLD.examId;
+END;
