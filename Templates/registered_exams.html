@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Your Registered Exams{% endblock %}
+
+{% block content %}
+<h2>Your Registered Exams</h2>
+{% if registered %}
+  <ul>
+  {% for exam in registered %}
+    <li>{{ exam.exam_name }} - {{ exam.exam_date }} @ {{ exam.exam_time }}</li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>You have not registered for any exams.</p>
+{% endif %}
+{% endblock %}
