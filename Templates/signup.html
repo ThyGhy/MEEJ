@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Exam Sign-up (MEEJ)</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="modernizr.custom.40753.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='LoginPageStyles.css') }}">
+</head>
+<body>
+    <div class="container-elem">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/College_of_Southern_Nevada_%28logo%29.svg/1200px-College_of_Southern_Nevada_%28logo%29.svg.png"
+             style="width:250px;height:auto;">
+        <h1>Exam Sign-up</h1>
+        {% if error %}
+        <p class="error-msg">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="{{ url_for('signup') }}">
+            <label for="name">Name:</label>
+            <input type="text" name="name" id="name" required>
+            <br>
+            <label for="email">Email:</label>
+            <input type="text" name="email" id="email" required>
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            <br><br>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+    <p style="margin:15px;text-align:center;">Already have an account? <a href="{{ url_for('login') }}">Sign in</a></p>
+</body>
+</html>

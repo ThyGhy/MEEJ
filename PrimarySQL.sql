@@ -1,16 +1,16 @@
 CREATE TABLE IF NOT EXISTS STUDENTS (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
-    firstName TEXT NOT NULL,
-    lastName TEXT,
+    name  TEXT NOT NULL,
+    password TEXT NOT NULL,
     registrationDate DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS FACULTY (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
-    firstName TEXT NOT NULL,
-    lastName TEXT,
+    name TEXT,
+    password TEXT NOT NULL,
     class TEXT
 );
 
@@ -53,3 +53,7 @@ BEGIN
     SET bookedSlots = bookedSlots - 1
     WHERE examId = OLD.examId;
 END;
+
+SELECT * FROM STUDENTS;
+
+

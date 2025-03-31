@@ -30,14 +30,15 @@ display: block;
 }
 
 .container-elem {
-   margin-left: auto;
-   margin-right: auto;
-   margin-top: 125px;
-   background-color: white;
-   max-width: 500px;
-   border: 1px solid black;
-   border-radius: 5px;
-   box-shadow: 0px 10px 6px -6px black;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 125px;
+	background-color: white;
+	max-width: 500px;
+	border: 1px solid black;
+	border-radius: 5px;
+	box-shadow: 0px 10px 6px -6px black;
+	padding-bottom: 20px; /* Added extra padding at the bottom */
 }
 
 .container-elem img {
@@ -46,6 +47,12 @@ display: block;
 	position: center;
 	padding: 15px;
 	display: block;
+}
+
+label[for="name"] {
+	color: black;
+	margin-left: 90px;
+	line-height: 30px;
 }
 
 label[for=email] {
@@ -58,6 +65,11 @@ label[for=password] {
 	color: black;
 	margin-left: 90px;  /* this too */
 	line-height: 30px;
+}
+
+.error-msg {
+	color: red;
+	text-align: center;
 }
 
 /*VisualRefresh*/

@@ -8,73 +8,82 @@ app.secret_key = "MEEJ"
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email = request.form['email']
+        email = request.form['email'].strip().lower()  # Normalize email
         password = request.form['password']
+        print("Attempting login for:", email)
         
-        # Retrieve user info via our database module
-        user = database.get_user_by_email(email)
-        if user and user['password'] == password:
-            session['user_id'] = user['user_id']
-            session['role'] = user['role']
-            session['email'] = user['email']
-            return redirect(url_for('home'))
-        else:
-            return render_template('login.html', error="Invalid credentials.")
+        # Check if the user is a student
+        student = database.get_student_by_email(email)
+        if student:
+            student_dict = dict(student)
+            if student_dict['password'] == password:
+                session['user_id'] = student_dict.get('student_id', student_dict.get('id'))
+                session['email'] = student_dict['email']
+                session['role'] = 'student'
+                print("Student login successful; redirecting to student home.")
+                return redirect(url_for('student_home'))
+        
+        # Check if the user is faculty
+        faculty = database.get_faculty_by_email(email)
+        if faculty:
+            faculty_dict = dict(faculty)
+            if faculty_dict['password'] == password:
+                session['user_id'] = faculty_dict.get('faculty_id', faculty_dict.get('id'))
+                session['email'] = faculty_dict['email']
+                session['role'] = 'faculty'
+                print("Faculty login successful; redirecting to faculty home.")
+                return redirect(url_for('faculty_home'))
+        
+        print("Invalid credentials.")
+        return render_template('login.html', error="Invalid credentials.")
     return render_template('login.html')
 
-@app.route('/register_exam', methods=['GET', 'POST'])
-def register_exam():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
     if request.method == 'POST':
-        exam_id = request.form['exam_id']
-        success, message = database.register_for_exam(session['user_id'], exam_id)
-        if success:
-            return redirect(url_for('registered_exams'))
+        name = request.form['name'].strip()
+        email = request.form['email'].strip().lower()
+        password = request.form['password']
+
+        # Student emails: exactly 10 digits followed by @student.csn.edu
+        student_regex = r'^\d{10}@student\.csn\.edu$'
+        # Faculty emails: any characters followed by @csn.edu or @faculty.csn.edu
+        faculty_regex = r'.+@(csn\.edu|faculty\.csn\.edu)$'
+
+        if re.match(student_regex, email):
+            user_type = 'student'
+        elif re.match(faculty_regex, email):
+            user_type = 'faculty'
         else:
-            exams = database.fetch_exams()
-            return render_template('register_exam.html', exams=exams, error=message)
-    
-    # For GET request, simply fetch exam data
-    exams = database.fetch_exams()
-    return render_template('register_exam.html', exams=exams)
+            error = "Invalid email format. Students must use a 10-digit NSHE ID followed by @student.csn.edu, and faculty must use a valid csn domain."
+            return render_template('signup.html', error=error)
 
-@app.route('/registered_exams')
-def registered_exams():
-    # Implement a similar approach to fetch and display registered exams
-    # using functions from your database module.
-    pass
+        # Prevent duplicate emails across both tables
+        if database.get_student_by_email(email) or database.get_faculty_by_email(email):
+            error = "Email already exists. Please log in or choose a different email."
+            return render_template('signup.html', error=error)
 
-@app.route('/test', methods=['GET', 'POST'])
-def test():
-    message = None
-    emails = []
-    if request.method == 'POST':
-        action = request.form.get('action')
-        if action == 'add':
-            email = request.form.get('email')
-            password = request.form.get('password')
-            # Validate email format: exactly 10 digits followed by @student or @student.csn.edu
-            # Adjust the pattern as needed.
-            pattern = r'^\d{10}@student(?:\.csn\.edu)?$'
-            if not re.match(pattern, email):
-                message = "Email must be in NSHE format (10 digits) and use '@student' (optionally '@student.csn.edu')."
-            else:
-                database.add_email(email, password)
-                message = f"Added {email} to the database."
-        elif action == 'fetch':
-            # No need for email validation when fetching emails
-            emails = database.fetch_emails()
-    return render_template('test.html', message=message, emails=emails)
+        # Insert into the proper table based on the user_type
+        if user_type == 'student':
+            database.add_student(name, email, password)
+        else:
+            database.add_faculty(name, email, password)
+        
+        return redirect(url_for('login'))
+    return render_template('signup.html')
 
-@app.route('/home')
-def home():
-    return render_template('home.html')
+
+@app.route('/student_home')
+def student_home():
+    return render_template('student_home.html')
+
+@app.route('/faculty_home')
+def faculty_home():
+    return render_template('faculty_home.html')
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('gocsn.html')
 
 if __name__ == "__main__":
     app.run(debug=True)
