@@ -1,18 +1,31 @@
-{% extends "base.html" %}
-{% block title %}Login - MEEJ Project{% endblock %}
-
-{% block content %}
-<h2>Login</h2>
-{% if error %}
-  <div style="color: red;">{{ error }}</div>
-{% endif %}
-<form method="POST" action="{{ url_for('login') }}">
-  <label for="email">Email:</label>
-  <input type="text" name="email" id="email" required>
-  <br><br>
-  <label for="password">Password (NSHE):</label>
-  <input type="password" name="password" id="password" required>
-  <br><br>
-  <button type="submit">Login</button>
-</form>
-{% endblock %}
+<!-- hi meej blehhhh -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>CIT Exam Sign-in (MEEJ)</title>
+		
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<script src="modernizr.custom.40753.js"></script>
+		
+		<link rel="stylesheet" href="login-styles.css">
+	</head>
+	
+	<body>
+		<div class="container-elem">
+			<img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/College_of_Southern_Nevada_%28logo%29.svg/1200px-College_of_Southern_Nevada_%28logo%29.svg.png" 
+			style="width:250px;height:auto;">
+			<h1>CIT Exam Sign-in</h1>
+			<form method="POST" action="{{ url_for('login') }}">
+				<label for="email">Email:</label>
+				<input type="text" name="email" id="email" required>
+				<br> 
+				<label for="password">Password (NSHE):</label>
+				<input type="password" name="password" id="password" required>
+				<br><br>
+				<button type="submit">Sign in</button>
+				<br><br>
+				<a href="https://at.csn.edu/csn-password-admin" style="margin:15px;">Forgot password?</a><br>			</form>
+		</div>
+		<p style="margin:15px;text-align:center;">Don't have an account? <a href="/signup">Register</a></p>
+	</body>
