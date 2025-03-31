@@ -55,6 +55,18 @@ label[for="name"] {
 	line-height: 30px;
 }
 
+label[for=firstname] {
+	color: black;
+	margin-left: 90px;
+	line-height: 30px;
+}
+
+label[for=lastname] {
+	color: black;
+	margin-left: 90px;
+	line-height: 30px;
+}
+
 label[for=email] {
 	color: black;
 	margin-left: 90px;  /* need to change this lol */

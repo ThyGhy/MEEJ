@@ -43,18 +43,24 @@ def login():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        name = request.form['name'].strip()
+        firstname = request.form['firstname'].strip().title()
+        lastname = request.form['lastname'].strip().title()
+        name = f"{firstname} {lastname}"
         email = request.form['email'].strip().lower()
         password = request.form['password']
 
-        # Student emails: exactly 10 digits followed by @student.csn.edu
-        student_regex = r'^\d{10}@student\.csn\.edu$'
-        # Faculty emails: any characters followed by @csn.edu or @faculty.csn.edu
-        faculty_regex = r'.+@(csn\.edu|faculty\.csn\.edu)$'
+        student_match = re.match(r'^(\d{10})@student\.csn\.edu$', email)
+        faculty_match = re.match(r'.+@(csn\.edu|faculty\.csn\.edu)$', email)
 
-        if re.match(student_regex, email):
+        if student_match:
             user_type = 'student'
-        elif re.match(faculty_regex, email):
+            nshe_id = student_match.group(1)
+
+            if password != nshe_id:
+                error = "For student accounts, the password must match your 10-digit NSHE ID."
+                return render_template('signup.html', error=error)
+
+        elif faculty_match:
             user_type = 'faculty'
         else:
             error = "Invalid email format. Students must use a 10-digit NSHE ID followed by @student.csn.edu, and faculty must use a valid csn domain."
@@ -65,14 +71,27 @@ def signup():
             error = "Email already exists. Please log in or choose a different email."
             return render_template('signup.html', error=error)
 
-        # Insert into the proper table based on the user_type
+        # Add and login user
         if user_type == 'student':
-            database.add_student(name, email, password)
+            database.add_student(name, firstname, lastname, email, password)
+            user = database.get_student_by_email(email)
+            session['user_id'] = user['student_id'] if 'student_id' in user.keys() else user['id']
+            session['email'] = user['email']
+            session['name'] = user['name']
+            session['role'] = 'student'
+            return redirect(url_for('student_home'))
+
         else:
-            database.add_faculty(name, email, password)
-        
-        return redirect(url_for('login'))
+            database.add_faculty(name, firstname, lastname, email, password)
+            user = database.get_faculty_by_email(email)
+            session['user_id'] = user['faculty_id'] if 'faculty_id' in user.keys() else user['id']
+            session['email'] = user['email']
+            session['name'] = user['name']
+            session['role'] = 'faculty'
+            return redirect(url_for('faculty_home'))
+
     return render_template('signup.html')
+
 
 
 @app.route('/student_home')

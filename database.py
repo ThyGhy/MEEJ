@@ -13,11 +13,11 @@ def get_student_by_email(email):
     conn.close()
     return student
 
-def add_student(name, email, password):
+def add_student(name, firstname, lastname, email, password):
     conn = get_db_connection()
     conn.execute(
-        "INSERT INTO students (name, email, password) VALUES (?, ?, ?)",
-        (name, email, password)
+        "INSERT INTO students (name, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)",
+        (name, firstname, lastname, email, password)
     )
     conn.commit()
     conn.close()
@@ -28,11 +28,11 @@ def get_faculty_by_email(email):
     conn.close()
     return faculty
 
-def add_faculty(name, email, password):
+def add_faculty(name, firstname, lastname, email, password):
     conn = get_db_connection()
     conn.execute(
-        "INSERT INTO faculty (name, email, password) VALUES (?, ?, ?)",
-        (name, email, password)
+        "INSERT INTO faculty (name, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)",
+        (name, firstname, lastname, email, password)
     )
     conn.commit()
     conn.close()
@@ -43,6 +43,8 @@ def fetch_exams():
     exams = conn.execute("SELECT * FROM exams").fetchall()
     conn.close()
     return exams
+
+
 
 def register_for_exam(user_id, exam_id):
     """Register a user for an exam, with basic duplicate and capacity check."""

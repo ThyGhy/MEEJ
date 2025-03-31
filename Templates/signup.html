@@ -11,13 +11,16 @@
     <div class="container-elem">
         <img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/College_of_Southern_Nevada_%28logo%29.svg/1200px-College_of_Southern_Nevada_%28logo%29.svg.png"
              style="width:250px;height:auto;">
-        <h1>Exam Sign-up</h1>
+        <h1>Exam System</h1>
         {% if error %}
         <p class="error-msg">{{ error }}</p>
         {% endif %}
         <form method="POST" action="{{ url_for('signup') }}">
-            <label for="name">Name:</label>
-            <input type="text" name="name" id="name" required>
+            <label for="firstname">First Name:</label>
+            <input type="text" name="firstname" id="firstname" required>
+            <br>
+            <label for="lastname">Last Name:</label>
+            <input type="text" name="lastname" id="lastname" required>
             <br>
             <label for="email">Email:</label>
             <input type="text" name="email" id="email" required>
