@@ -48,6 +48,12 @@ display: block;
 	display: block;
 }
 
+label[for=fullname] {
+	color: black;
+	margin-left: 90px;
+	line-height: 30px;
+}
+
 label[for=email] {
 	color: black;
 	margin-left: 90px;  /* need to change this lol */
@@ -84,7 +90,7 @@ padding-bottom:14px;
 text-align:left;
 }
 
-input[type="text"], input[type="password"],textarea {
+input[type="text"], input[type="password"], input[type="fullname"],textarea {
 	margin: auto;
 	background-color : #ffffff;
 	box-shadow: 3px 3px 5px rgba(0,0,0,0.25) inset;
