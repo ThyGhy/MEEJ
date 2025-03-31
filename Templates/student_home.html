@@ -1,15 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Student Home (MEEJ)</title>
     <meta charset="UTF-8">
+    <title>Student Home (MEEJ)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Reuse your existing stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='LoginPageStyles.css') }}">
+    <style>
+        /* Fixed header bar */
+        .header-bar {
+            background-color: #ffd41c; /* Yellow */
+            height: 50px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+            .header-bar .user-name {
+                font-size: 16px;
+                font-weight: bold;
+                color: #000;
+            }
+
+            .header-bar .user-email {
+                font-size: 14px;
+                color: #000;
+            }
+        /* Add top margin so content doesn't hide behind the header */
+        .content {
+            margin-top: 70px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container-elem">
-        <h1>Welcome, Student!</h1>
-        <p>This is your student dashboard.</p>
+    <!-- Header bar with user name (left) and email (right) -->
+    <div class="header-bar">
+        <div class="user-name">{{ session.name }}</div>
+        <div class="user-email">{{ session.email }}</div>
+    </div>
+    <div class="container-elem content">
+        <h1>Student Dashboard</h1>
+        <!-- Additional student-specific content goes here -->
     </div>
 </body>
 </html>

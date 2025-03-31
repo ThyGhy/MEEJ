@@ -19,6 +19,7 @@ def login():
             if student_dict['password'] == password:
                 session['user_id'] = student_dict.get('student_id', student_dict.get('id'))
                 session['email'] = student_dict['email']
+                session['name'] = student_dict['name']
                 session['role'] = 'student'
                 print("Student login successful; redirecting to student home.")
                 return redirect(url_for('student_home'))
@@ -30,6 +31,7 @@ def login():
             if faculty_dict['password'] == password:
                 session['user_id'] = faculty_dict.get('faculty_id', faculty_dict.get('id'))
                 session['email'] = faculty_dict['email']
+                session['name'] = faculty_dict['name']
                 session['role'] = 'faculty'
                 print("Faculty login successful; redirecting to faculty home.")
                 return redirect(url_for('faculty_home'))
