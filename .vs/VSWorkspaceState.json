@@ -1,9 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\Static",
-    "\\Templates"
+    ""
   ],
-  "SelectedNode": "\\Templates\\signup.html",
+  "SelectedNode": "\\app.py",
   "PreviewInSolutionExplorer": false
 }

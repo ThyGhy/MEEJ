@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import database  # This is our custom module
 import re
+import subprocess
 
 app = Flask(__name__)
 app.secret_key = "MEEJ"
@@ -105,6 +106,14 @@ def faculty_home():
 @app.route('/')
 def index():
     return render_template('gocsn.html')
+
+
+#This is to Make Sure the Website Stays Up To Date.
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    print("Received webhook from GitHub. Running update script...")
+    subprocess.Popen(['./update.sh'])
+    return '', 204
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
