@@ -16,9 +16,7 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - type: bind
-        source: ./Caddyfile
-        target: /etc/caddy/Caddyfile
+      - ./caddy_config:/etc/caddy
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
