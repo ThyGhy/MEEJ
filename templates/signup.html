@@ -17,16 +17,16 @@
         {% endif %}
         <form method="POST" action="{{ url_for('signup') }}">
             <label for="firstname">First Name:</label>
-            <input type="text" name="firstname" id="firstname" required>
+            <input type="text" name="firstname" id="firstname" required placeholder="e.g. Craig">
             <br>
             <label for="lastname">Last Name:</label>
-            <input type="text" name="lastname" id="lastname" required>
+            <input type="text" name="lastname" id="lastname" required placeholder="e.g. Bottles">
             <br>
             <label for="email">Email:</label>
-            <input type="text" name="email" id="email" required>
+            <input type="text" name="email" id="email" required placeholder="e.g. NSHE_ID@student.csn.edu/csn.edu">
             <br>
             <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required>
+            <input type="password" name="password" id="password" required placeholder="NSHE_ID/Faculty Password">
             <br><br>
             <button type="submit">Register</button>
         </form>
