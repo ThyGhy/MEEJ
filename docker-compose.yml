@@ -8,6 +8,8 @@ services:
     ports:
       - "5000:5000"
     restart: unless-stopped
+    networks:
+      - meej-net
 
   reverse_proxy:
     image: caddy:latest
@@ -18,10 +20,15 @@ services:
     volumes:
       - ./caddy_config:/etc/caddy
       - caddy_data:/data
-      - caddy_config:/config
+      - caddy_config_volume:/config
     depends_on:
       - flask_app
+    networks:
+      - meej-net
 
 volumes:
   caddy_data:
-  caddy_config:
+  caddy_config_volume:
+
+networks:
+  meej-net:
