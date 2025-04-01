@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='LoginPageStyles.css') }}">
     <style>
-        /* Fixed header bar */
+        
         .header-bar {
-            background-color: #ffd41c; /* Yellow */
+            background-color: #ffd41c; 
             height: 50px;
             width: 100%;
             position: fixed;
@@ -32,21 +32,25 @@
                 font-size: 14px;
                 color: #000;
             }
-        /* Add top margin so content doesn't hide behind the header */
+        
         .content {
             margin-top: 70px;
         }
     </style>
 </head>
 <body>
-    <!-- Header bar with user name (left) and email (right) -->
+
     <div class="header-bar">
         <div class="user-name">{{ session.name }}</div>
         <div class="user-email">{{ session.email }}</div>
     </div>
     <div class="container-elem content">
         <h1>Faculty Dashboard</h1>
-        <!-- Additional faculty-specific content goes here -->
+
     </div>
+
+    <p style="margin-top: 50px; font-size: 12px; text-align: center; color: #FFFFFF;">
+        This site is part of a student project and is not officially affiliated with CSN.
+    </p>
 </body>
 </html>
