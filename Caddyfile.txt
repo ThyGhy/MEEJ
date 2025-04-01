@@ -1,0 +1,3 @@
+csnexams.com:80 {
+    reverse_proxy flask_app:5000
+}
