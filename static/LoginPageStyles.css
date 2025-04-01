@@ -53,30 +53,35 @@ label[for="name"] {
 	color: black;
 	margin-left: 90px;
 	line-height: 30px;
+	text-align: center;
 }
 
 label[for=firstname] {
 	color: black;
 	margin-left: 90px;
 	line-height: 30px;
+	text-align: center;
 }
 
 label[for=lastname] {
 	color: black;
 	margin-left: 90px;
 	line-height: 30px;
+	text-align: center;
 }
 
 label[for=email] {
 	color: black;
-	margin-left: 90px;  /* need to change this lol */
+	margin-left: 90px; /* need to change this lol */
 	line-height: 30px;
+	text-align: center;
 }
 
 label[for=password] {
 	color: black;
-	margin-left: 90px;  /* this too */
+	margin-left: 90px; /* this too */
 	line-height: 30px;
+	text-align: center;
 }
 
 .error-msg {
