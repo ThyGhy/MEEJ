@@ -1,19 +1,13 @@
+version: '3.8'
+
 services:
   flask_app:
-    build: .
+    build:
+      context: .
     container_name: exam_registration
     ports:
       - "5000:5000"
-    volumes:
-      - ./ExamRegistration.db:/app/ExamRegistration.db
-    restart: always
-
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 60
+    restart: unless-stopped
 
   reverse_proxy:
     image: caddy:latest
@@ -22,9 +16,14 @@ services:
     ports:
       - "8080:80"
     volumes:
-  - type: bind
-    source: ./Caddyfile
-    target: /etc/caddy/Caddyfile
-  - caddy_data:/data
-  - caddy_config:/config
+      - type: bind
+        source: ./Caddyfile
+        target: /etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - flask_app
 
+volumes:
+  caddy_data:
+  caddy_config:
