@@ -115,10 +115,6 @@ def webhook():
     subprocess.Popen(['./update.sh'])
     return '', 204
 
-@app.route('/webhook-test')
-def webhook_test():
-    return "Webhook is reachable!"
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
