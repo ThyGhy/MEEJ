@@ -23,7 +23,3 @@ services:
       - "8080:80"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
-
-volumes:
-  caddy_data:
-  caddy_config:
