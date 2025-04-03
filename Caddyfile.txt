@@ -3,5 +3,5 @@ csnexams.com {
 }
 
 maurion.online {
-    reverse_proxy 172.16.7.2:5050
+    reverse_proxy MaurionOnline:5000
 }
