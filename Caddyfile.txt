@@ -1,3 +1,7 @@
 csnexams.com {
     reverse_proxy flask_app:5000
 }
+
+maurion.online {
+    reverse_proxy 172.16.7.2:5050
+}
