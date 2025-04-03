@@ -30,8 +30,9 @@ services:
       - meej-net
 
 volumes:
-  caddy_data:
-  caddy_config_volume:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config_volume:/config
 
 networks:
   meej-net:
