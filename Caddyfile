@@ -3,5 +3,5 @@ csnexams.com {
 }
 
 maurion.online {
-    reverse_proxy mauriononline-maurion_app:5000
+    reverse_proxy MaurionOnline:5000
 }
