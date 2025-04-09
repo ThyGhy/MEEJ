@@ -7,7 +7,7 @@ echo "Pulling latest changes from GitHub..."
 git pull origin main
 
 echo "Rebuilding and restarting containers..."
-docker-compose build --no-cache
-docker-compose up -d
+docker compose build --no-cache
+docker compose up -d
 
 echo "Update complete."
