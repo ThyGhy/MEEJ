@@ -120,7 +120,7 @@ def register_exam():
     if session.get('role') != 'student':
         return redirect(url_for('login'))
 
-    return render_template('register_exam.html', exams=exams)
+    return render_template('register_exam.html')
 
 
 @app.route('/create_exam', methods=['GET', 'POST'])
