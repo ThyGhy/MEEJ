@@ -3,6 +3,6 @@ csnexams.com {
 }
 
 maurion.online {
-    reverse_proxy /webhook MaurionOnline:5000
-    reverse_proxy / MaurionOnline:5000
+    reverse_proxy /webhook maurion_app:5000
+    reverse_proxy / maurion_app:5000
 }
