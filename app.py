@@ -136,20 +136,7 @@ def create_exam():
 #This is to Make Sure the Website Stays Up To Date.
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    with open("/app/webhook.log", "a") as f:
-        f.write(f"[{datetime.datetime.now()}] Webhook received. Starting update.sh...\n")
-    
-    try:
-        result = subprocess.run(["/bin/bash", "/app/update.sh"], capture_output=True, text=True)
-        
-        with open("/app/webhook.log", "a") as f:
-            f.write(f"STDOUT:\n{result.stdout}\n")
-            f.write(f"STDERR:\n{result.stderr}\n")
-            f.write("------\n")
-    except Exception as e:
-        with open("/app/webhook.log", "a") as f:
-            f.write(f"Exception: {str(e)}\n")
-
+    subprocess.run(["curl", "-X", "POST", "http://host.docker.internal:4000/update"])
     return '', 204
 
 if __name__ == "__main__":
