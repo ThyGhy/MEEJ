@@ -24,7 +24,7 @@
 			<br><br>
 			<button type="submit">Sign in</button>
 			<br><br>
-			<a href="https://at.csn.edu/csn-password-admin" style="margin: 15px; text-align: center;">Forgot password?</a>
+			<a href="{{ url_for('forgot_password') }}" style="margin: 15px; text-align: center;">Forgot password?</a>
 		</form>
 	</div>
 	<p style="margin:15px;text-align:center;">Don't have an account? <a href="{{ url_for('signup') }}">Register</a></p>
