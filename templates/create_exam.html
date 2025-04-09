@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create an Exam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='LoginPageStyles.css') }}">
+</head>
+<body>
+    <div class="container-elem" style="margin-top: 100px;">
+        <h1>Create an Exam</h1>
+        <form method="POST" action="{{ url_for('create_exam') }}">
+            <label for="exam_name">Exam Name:</label>
+            <input type="text" name="exam_name" id="exam_name" required>
+
+            <label for="exam_date">Date:</label>
+            <input type="date" name="exam_date" id="exam_date" required>
+
+            <label for="exam_time">Time:</label>
+            <input type="time" name="exam_time" id="exam_time" required>
+
+            <button type="submit">Create Exam</button>
+        </form>
+    </div>
+    <p style="margin-top: 50px; font-size: 12px; text-align: center; color: #FFFFFF;">
+        This site is part of a student project and is not officially affiliated with CSN.
+    </p>
+</body>
+</html>

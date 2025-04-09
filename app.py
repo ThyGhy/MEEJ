@@ -107,6 +107,46 @@ def faculty_home():
 def index():
     return render_template('gocsn.html')
 
+@app.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email'].strip().lower()
+        # need to figure out best way to reset password here. Maybe some form of email situation? idk
+        return render_template('forgot_password.html', message="If this email exists, a reset link will be sent.")
+    return render_template('forgot_password.html')
+
+@app.route('/register_exam', methods=['GET', 'POST'])
+def register_exam():
+    if session.get('role') != 'student':
+        return redirect(url_for('login'))
+
+    exams = database.get_all_available_exams()  # You’ll need this function in your database module
+
+    if request.method == 'POST':
+        exam_id = request.form['exam_id']
+        student_id = session['user_id']
+        database.register_student_for_exam(student_id, exam_id)  # You'll define this too
+        return redirect(url_for('student_home'))
+
+    return render_template('register_exam.html', exams=exams)
+
+
+@app.route('/create_exam', methods=['GET', 'POST'])
+def create_exam():
+    if session.get('role') != 'faculty':
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        exam_name = request.form['exam_name']
+        exam_date = request.form['exam_date']
+        exam_time = request.form['exam_time']
+        faculty_id = session['user_id']
+        database.create_exam(faculty_id, exam_name, exam_date, exam_time)
+        return redirect(url_for('faculty_home'))
+
+    return render_template('create_exam.html')
+
+
 
 #This is to Make Sure the Website Stays Up To Date.
 @app.route('/webhook', methods=['POST'])
