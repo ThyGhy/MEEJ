@@ -140,7 +140,7 @@ def webhook():
         f.write(f"[{datetime.datetime.now()}] Webhook received. Starting update.sh...\n")
     
     try:
-        result = subprocess.run(["/bin/bash", "/app/update.sh"], capture_output=True, text=True)
+        result = subprocess.run(["/usr/bin/env", "bash", "/app/update.sh"], capture_output=True, text=True)
         
         with open("/app/webhook.log", "a") as f:
             f.write(f"STDOUT:\n{result.stdout}\n")

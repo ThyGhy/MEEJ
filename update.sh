@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo "Pulling latest changes from GitHub..."
 cd /app
