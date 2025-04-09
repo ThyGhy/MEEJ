@@ -9,8 +9,8 @@ services:
       - "5000:5000"
     restart: unless-stopped
     volumes:
-      - .:/app
-      - /mnt/StoragePool/Github/MEEJ:/mnt/StoragePool/Github/MEEJ
+      - ./static:/app/static
+      - ./templates:/app/templates
     networks:
       - meej-net
 
@@ -19,8 +19,8 @@ services:
     container_name: caddy_proxy
     restart: unless-stopped
     ports:
-      - "80:80"     # HTTP (needed for Let's Encrypt challenge)
-      - "443:443"   # HTTPS
+      - "80:80"
+      - "443:443"
     volumes:
       - ./caddy_config:/etc/caddy
       - caddy_data:/data
