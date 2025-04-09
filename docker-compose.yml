@@ -10,6 +10,7 @@ services:
     restart: unless-stopped
     volumes:
       - .:/app
+      - /mnt/StoragePool/Github/MEEJ:/mnt/StoragePool/Github/MEEJ
     networks:
       - meej-net
 
