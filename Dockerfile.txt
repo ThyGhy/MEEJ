@@ -1,16 +1,15 @@
 FROM python:3.11-slim
 
 WORKDIR /app
-
-# Install git
-RUN apt-get update && apt-get install -y git && apt-get clean
-RUN git config --global --add safe.directory /app
-
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+# 🔧 Install Git + mark /app as safe
+RUN apt-get update && \
+    apt-get install -y git && \
+    git config --global --add safe.directory /app && \
+    apt-get clean
 
-EXPOSE 5000
+RUN pip install --no-cache-dir -r requirements.txt
 
 CMD ["python", "app.py"]
 
