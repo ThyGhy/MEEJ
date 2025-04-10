@@ -7,20 +7,40 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='LoginPageStyles.css') }}">
 </head>
 <body>
+    <style>
+        .header-bar {
+            background-color: #ffd41c;
+            height: 50px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+            .header-bar .user-name {
+                font-size: 16px;
+                font-weight: bold;
+                color: #000;
+            }
+
+            .header-bar .user-email {
+                font-size: 14px;
+                color: #000;
+            }
+    </style>
+    <div class="header-bar">
+        <div class="user-name">{{ session.name }}</div>
+        <div class="user-email">{{ session.email }}</div>
+    </div>
+
     <div class="container-elem" style="margin-top: 100px;">
         <h1>Create an Exam</h1>
-        <form method="POST" action="{{ url_for('create_exam') }}">
-            <label for="exam_name">Exam Name:</label>
-            <input type="text" name="exam_name" id="exam_name" required>
-
-            <label for="exam_date">Date:</label>
-            <input type="date" name="exam_date" id="exam_date" required>
-
-            <label for="exam_time">Time:</label>
-            <input type="time" name="exam_time" id="exam_time" required>
-
-            <button type="submit">Create Exam</button>
-        </form>
     </div>
     <p style="margin-top: 50px; font-size: 12px; text-align: center; color: #FFFFFF;">
         Disclaimer: This site is part of a student project and is not officially affiliated with College of Southern Nevada (CSN).
