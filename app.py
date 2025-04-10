@@ -136,38 +136,33 @@ def create_exam():
 #This is to Make Sure the Website Stays Up To Date.
 @app.route('/webhook', methods=['POST'])
 def webhook():
+    import datetime, subprocess
 
-    print("[Webhook] Webhook was called at", datetime.datetime.now())
-    
-    if request.method == 'GET':
-        return "Webhook GET route working!", 200
+    print("[Webhook] POST received at", datetime.datetime.now())
 
     try:
-        log_path = "/app/webhook.log"
-        script_path = "/mnt/StoragePool/Github/MEEJ/update.sh"
-
-        with open(log_path, "a") as f:
+        with open("/app/webhook.log", "a") as f:
             f.write(f"[{datetime.datetime.now()}] Webhook triggered.\n")
-            f.write(f"Running script: {script_path}\n")
 
         result = subprocess.run(
-            ["/usr/bin/env", "bash", script_path],
+            ["/usr/bin/env", "bash", "/mnt/StoragePool/Github/MEEJ/update.sh"],
             capture_output=True,
             text=True
         )
 
-        with open(log_path, "a") as f:
+        with open("/app/webhook.log", "a") as f:
             f.write(f"Return Code: {result.returncode}\n")
             f.write(f"STDOUT:\n{result.stdout}\n")
             f.write(f"STDERR:\n{result.stderr}\n")
-            f.write("------\n")
 
+        print("[Webhook] Script executed")
     except Exception as e:
-        print(f"[Webhook] Exception occurred: {str(e)}")
+        print(f"[Webhook] Exception: {e}")
         with open("/app/webhook.log", "a") as f:
             f.write(f"Exception: {str(e)}\n")
 
     return '', 204
+
 
 @app.route("/ping")
 def ping():
