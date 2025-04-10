@@ -136,11 +136,11 @@ def create_exam():
 #This is to Make Sure the Website Stays Up To Date.
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    import datetime
-    import subprocess
-    import os
 
-    print("[Webhook] Webhook was called at", datetime.datetime.now())  # Always shows in Docker logs
+    print("[Webhook] Webhook was called at", datetime.datetime.now())
+    
+    if request.method == 'GET':
+        return "Webhook GET route working!", 200
 
     try:
         log_path = "/app/webhook.log"
