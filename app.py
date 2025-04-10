@@ -136,21 +136,39 @@ def create_exam():
 #This is to Make Sure the Website Stays Up To Date.
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    with open("/app/webhook.log", "a") as f:
-        f.write(f"[{datetime.datetime.now()}] Webhook received. Starting update.sh...\n")
-    
+    import datetime
+    import subprocess
+    import os
+
+    print("[Webhook] Webhook was called at", datetime.datetime.now())  # Always shows in Docker logs
+
     try:
-        result = subprocess.run(["/usr/bin/env", "bash", "/mnt/StoragePool/Github/MEEJ/update.sh"], capture_output=True, text=True)
-        
-        with open("/app/webhook.log", "a") as f:
+        log_path = "/app/webhook.log"
+        script_path = "/mnt/StoragePool/Github/MEEJ/update.sh"
+
+        with open(log_path, "a") as f:
+            f.write(f"[{datetime.datetime.now()}] Webhook triggered.\n")
+            f.write(f"Running script: {script_path}\n")
+
+        result = subprocess.run(
+            ["/usr/bin/env", "bash", script_path],
+            capture_output=True,
+            text=True
+        )
+
+        with open(log_path, "a") as f:
+            f.write(f"Return Code: {result.returncode}\n")
             f.write(f"STDOUT:\n{result.stdout}\n")
             f.write(f"STDERR:\n{result.stderr}\n")
             f.write("------\n")
+
     except Exception as e:
+        print(f"[Webhook] Exception occurred: {str(e)}")
         with open("/app/webhook.log", "a") as f:
             f.write(f"Exception: {str(e)}\n")
 
     return '', 204
+
 
 
 if __name__ == "__main__":
