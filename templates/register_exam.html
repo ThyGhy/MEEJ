@@ -12,17 +12,6 @@
         {% if error %}
         <p class="error-msg">{{ error }}</p>
         {% endif %}
-        <form method="POST" action="{{ url_for('register_exam') }}">
-            <label for="exam_id">Choose an exam:</label>
-            <select name="exam_id" id="exam_id" required>
-                {% for exam in exams %}
-                <option value="{{ exam.exam_id }}">
-                    {{ exam.exam_name }} - {{ exam.exam_date }} @ {{ exam.exam_time }}
-                </option>
-                {% endfor %}
-            </select>
-            <button type="submit">Register</button>
-        </form>
     </div>
     <p style="margin-top: 50px; font-size: 12px; text-align: center; color: #FFFFFF;">
       Disclaimer: This site is part of a student project and is not officially affiliated with College of Southern Nevada (CSN).
