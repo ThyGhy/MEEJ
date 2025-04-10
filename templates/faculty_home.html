@@ -32,6 +32,22 @@
                 font-size: 14px;
                 color: #000;
             }
+
+
+        .button {
+            display: inline-block;
+            margin: 20px;
+            padding: 15px 30px;
+            background-color: #242526;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+            .button:hover {
+                background-color: #1d1e21;
+            }
         
         .content {
             margin-top: 70px;
@@ -46,9 +62,7 @@
     </div>
     <div class="container-elem content">
         <h1>Faculty Dashboard</h1>
-        <a href="{{ url_for('create_exam') }}">
-            <button type="button" style="margin-top: 20px;">Create an Exam</button>
-        </a>
+        <a href="{{ url_for('create_exam') }}" class="button">Create an Exam</a>
     </div>
 
     <p style="margin-top: 50px; font-size: 12px; text-align: center; color: #FFFFFF;">
