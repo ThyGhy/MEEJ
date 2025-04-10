@@ -169,6 +169,12 @@ def webhook():
 
     return '', 204
 
+@app.route("/ping")
+def ping():
+    print("[PING] Ping route hit!")
+    return "pong"
+
+
 
 
 if __name__ == "__main__":
