@@ -140,21 +140,13 @@ def reset_password(token):
 
     if request.method == 'POST':
         new_password = request.form['password']
-
         conn = database.get_db_connection()
         conn.execute("UPDATE faculty SET password = ? WHERE email = ?", (new_password, email))
         conn.commit()
         conn.close()
-
         return redirect(url_for('login'))
 
-    return '''
-    <form method="POST">
-        <label>New Password:</label>
-        <input type="password" name="password" required>
-        <button type="submit">Update Password</button>
-    </form>
-    '''
+    return render_template('reset_password.html')''
 
 
 
