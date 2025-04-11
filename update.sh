@@ -15,10 +15,6 @@ echo "Rebuilding and restarting Docker container..."
 docker compose down
 docker compose up -d --build
 
-echo "Restarting Caddy to apply any reverse proxy updates..."
-docker compose restart caddy_proxy
-
-
 DISCORD_WEBHOOK="https://discord.com/api/webhooks/1359989680170336478/YYBesd3VltAnFh-ffAnLWZvlFeizISvrOgq2BIe7A_dhStzRmwo9ERaKDruSnmQpbILD"
 
 curl -H "Content-Type: application/json" \
