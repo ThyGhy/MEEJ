@@ -124,10 +124,8 @@ def forgot_password():
             token = database.create_password_reset_token(email)
             reset_link = url_for('reset_password', token=token, _external=True)
             
-            # In a real system, you would send this via email
-            # For this simulation, we'll display it on the page
-            return render_template('forgot_password.html', 
-                success=f"A password reset link has been generated. Please click the link below to reset your password:<br><a href='{reset_link}'>{reset_link}</a>")
+            # Redirect to the reset password page directly
+            return redirect(reset_link)
         
         # Don't reveal if the email exists or not for security
         return render_template('forgot_password.html', 
