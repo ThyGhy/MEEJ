@@ -1,4 +1,6 @@
 import sqlite3
+import uuid
+import datetime
 
 DATABASE = 'ExamRegistration.db'
 
@@ -44,7 +46,21 @@ def fetch_exams():
     conn.close()
     return exams
 
+def create_password_reset_token(email):
+    token = str(uuid.uuid4())
+    created_at = datetime.datetime.utcnow()
+    conn = get_db_connection()
+    conn.execute("INSERT INTO password_resets (email, token, created_at) VALUES (?, ?, ?)", 
+                 (email, token, created_at))
+    conn.commit()
+    conn.close()
+    return token
 
+def get_email_by_token(token):
+    conn = get_db_connection()
+    result = conn.execute("SELECT email, created_at FROM password_resets WHERE token = ?", (token,)).fetchone()
+    conn.close()
+    return result
 
 def register_for_exam(user_id, exam_id):
     """Register a user for an exam, with basic duplicate and capacity check."""

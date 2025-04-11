@@ -112,9 +112,51 @@ def index():
 def forgot_password():
     if request.method == 'POST':
         email = request.form['email'].strip().lower()
-        # need to figure out best way to reset password here. Maybe some form of email situation? idk
-        return render_template('forgot_password.html', message="If this email exists, a reset link will be sent.")
+
+        student_match = re.match(r'^(\d{10})@student\.csn\.edu$', email)
+
+        if student_match:
+            # This is to prevent students from resetting (Makes things so much easier)
+            return render_template('forgot_password.html', message="Students must use their NSHE ID as their password. Reset not allowed.")
+        
+        faculty = database.get_faculty_by_email(email)
+        if faculty:
+            token = database.create_password_reset_token(email)
+            reset_link = url_for('reset_password', token=token, _external=True)
+            return render_template('forgot_password.html', message=f"Simulated reset link: {reset_link}")
+        
+        return render_template('forgot_password.html', message="If this email exists, a reset link will be shown.")
+    
     return render_template('forgot_password.html')
+
+# Only Works For Faculty, because you know.
+@app.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    token_data = database.get_email_by_token(token)
+    if not token_data:
+        return "Invalid or expired token.", 404
+
+    email = token_data['email']
+
+    if request.method == 'POST':
+        new_password = request.form['password']
+
+        conn = database.get_db_connection()
+        conn.execute("UPDATE faculty SET password = ? WHERE email = ?", (new_password, email))
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for('login'))
+
+    return '''
+    <form method="POST">
+        <label>New Password:</label>
+        <input type="password" name="password" required>
+        <button type="submit">Update Password</button>
+    </form>
+    '''
+
+
 
 @app.route('/register_exam', methods=['GET', 'POST'])
 def register_exam():
