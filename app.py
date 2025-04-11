@@ -112,22 +112,37 @@ def index():
 def forgot_password():
     if request.method == 'POST':
         email = request.form['email'].strip().lower()
+        print(f"Processing forgot password request for email: {email}")
+        
         student_match = re.match(r'^(\d{10})@student\.csn\.edu$', email)
         
         if student_match:
+            print("Student email detected - reset not allowed")
             return render_template('forgot_password.html', 
                 error="Students must use their NSHE ID as their password. Reset Not Allowed.")
         
         faculty = database.get_faculty_by_email(email)
+        print(f"Faculty check result: {faculty is not None}")
+        
         if faculty:
-            # Generate reset token
-            token = database.create_password_reset_token(email)
-            reset_link = url_for('reset_password', token=token, _external=True)
-            
-            # Redirect to the reset password page directly
-            return redirect(reset_link)
+            try:
+                # Generate reset token
+                token = database.create_password_reset_token(email)
+                print(f"Generated token: {token}")
+                
+                reset_link = url_for('reset_password', token=token, _external=True)
+                print(f"Reset link generated: {reset_link}")
+                
+                # For now, let's show the link on the page instead of redirecting
+                return render_template('forgot_password.html',
+                    success=f"Click the link below to reset your password:<br><a href='{reset_link}'>Reset Password</a>")
+            except Exception as e:
+                print(f"Error generating reset token: {str(e)}")
+                return render_template('forgot_password.html',
+                    error="An error occurred while processing your request. Please try again.")
         
         # Don't reveal if the email exists or not for security
+        print("Email not found or invalid")
         return render_template('forgot_password.html', 
             info="If a faculty account exists with this email, a password reset link will be sent.")
     
