@@ -110,24 +110,23 @@ def index():
 
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
+    success_message = None
+    error_message = None
+
     if request.method == 'POST':
         email = request.form['email'].strip().lower()
-
         student_match = re.match(r'^(\d{10})@student\.csn\.edu$', email)
 
         if student_match:
-            # This is to prevent students from resetting (Makes things so much easier)
-            return render_template('forgot_password.html', message="Students must use their NSHE ID as their password. Reset not allowed.")
-        
-        faculty = database.get_faculty_by_email(email)
-        if faculty:
+            error_message = "Students must use their NSHE ID as their password. Reset not allowed."
+        elif database.get_faculty_by_email(email):
             token = database.create_password_reset_token(email)
             reset_link = url_for('reset_password', token=token, _external=True)
-            return render_template('forgot_password.html', message=f"Simulated reset link: {reset_link}")
-        
-        return render_template('forgot_password.html', message="If this email exists, a reset link will be shown.")
-    
-    return render_template('forgot_password.html')
+            success_message = f"Follow this link to reset your password: <a href='{reset_link}'>{reset_link}</a>"
+        else:
+            error_message = "If this email exists, a reset link will be sent."
+
+    return render_template('forgot_password.html', success=success_message, error=error_message)
 
 # Only Works For Faculty, because you know.
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
