@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Error - CSN Exam Registration</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Error (MEEJ)</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="{{ url_for('static', filename='LoginPageStyles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h2>Error</h2>
+    <div class="container-elem">
+        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/College_of_Southern_Nevada_%28logo%29.svg/1200px-College_of_Southern_Nevada_%28logo%29.svg.png" style="width:250px;height:auto;">
+        <h1>Error</h1>
         
-        <div class="alert alert-danger">
-            {{ error }}
-        </div>
+        <p class="error-msg">{{ error }}</p>
         
-        <div class="form-group">
-            <a href="{{ url_for('login') }}" class="btn btn-primary">Back to Login</a>
+        <div style="text-align: center;">
+            <a href="{{ url_for('login') }}">Back to Login</a>
         </div>
     </div>
+    <p style="margin-top: 50px; font-size: 12px; text-align: center; color: #FFFFFF;">
+        Disclaimer: This site is part of a student project and is not officially affiliated with College of Southern Nevada (CSN).
+    </p>
 </body>
 </html> 
