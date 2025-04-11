@@ -84,6 +84,13 @@ label[for=password] {
 	text-align: center;
 }
 
+.success-msg {
+    color: green;
+    text-align: center;
+    font-weight: bold;
+}
+
+
 /*VisualRefresh*/
 h1 {
 text-align: center;
