@@ -136,41 +136,8 @@ def create_exam():
 #This is to Make Sure the Website Stays Up To Date.
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    import datetime, subprocess
-
-    print("[Webhook] POST received at", datetime.datetime.now())
-
-    try:
-        with open("/app/webhook.log", "a") as f:
-            f.write(f"[{datetime.datetime.now()}] Webhook triggered.\n")
-
-        result = subprocess.run(
-            ["/usr/bin/env", "bash", "/mnt/StoragePool/Github/MEEJ/update.sh"],
-            capture_output=True,
-            text=True
-        )
-
-        with open("/app/webhook.log", "a") as f:
-            f.write(f"Return Code: {result.returncode}\n")
-            f.write(f"STDOUT:\n{result.stdout}\n")
-            f.write(f"STDERR:\n{result.stderr}\n")
-
-        print("[Webhook] Script executed")
-    except Exception as e:
-        print(f"[Webhook] Exception: {e}")
-        with open("/app/webhook.log", "a") as f:
-            f.write(f"Exception: {str(e)}\n")
-
-    return '', 204
-
-
-@app.route("/ping")
-def ping():
-    print("[PING] Ping route hit!")
-    return "pong"
-
-
-
+    subprocess.Popen(['/mnt/StoragePool/Github/update.sh'])
+    return 'Update triggered', 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
