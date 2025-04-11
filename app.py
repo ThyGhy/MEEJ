@@ -110,42 +110,69 @@ def index():
 
 @app.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
-    success_message = None
-    error_message = None
-
     if request.method == 'POST':
         email = request.form['email'].strip().lower()
         student_match = re.match(r'^(\d{10})@student\.csn\.edu$', email)
-
+        
         if student_match:
-            error_message = "Students must use their NSHE ID as their password. Reset not allowed."
-        elif database.get_faculty_by_email(email):
+            return render_template('forgot_password.html', 
+                error="Students must use their NSHE ID as their password. Reset Not Allowed.")
+        
+        faculty = database.get_faculty_by_email(email)
+        if faculty:
+            # Generate reset token
             token = database.create_password_reset_token(email)
             reset_link = url_for('reset_password', token=token, _external=True)
-            success_message = f"Follow this link to reset your password: <a href='{reset_link}'>{reset_link}</a>"
-        else:
-            error_message = "If this email exists, a reset link will be sent."
+            
+            # In a real system, you would send this via email
+            # For this simulation, we'll display it on the page
+            return render_template('forgot_password.html', 
+                success=f"A password reset link has been generated. Please click the link below to reset your password:<br><a href='{reset_link}'>{reset_link}</a>")
+        
+        # Don't reveal if the email exists or not for security
+        return render_template('forgot_password.html', 
+            info="If a faculty account exists with this email, a password reset link will be sent.")
+    
+    return render_template('forgot_password.html')
 
-    return render_template('forgot_password.html', success=success_message, error=error_message)
-
-# Only Works For Faculty, because you know.
 @app.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
+    # Verify token and get associated email
     token_data = database.get_email_by_token(token)
+    
     if not token_data:
-        return "Invalid or expired token.", 404
-
+        return render_template('error.html', 
+            error="Invalid or expired password reset link. Please request a new password reset.")
+    
+    # Verify this is a faculty email
     email = token_data['email']
-
+    faculty = database.get_faculty_by_email(email)
+    if not faculty:
+        return render_template('error.html', 
+            error="This reset link is not valid for student accounts.")
+    
     if request.method == 'POST':
         new_password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        # Validate password
+        if new_password != confirm_password:
+            return render_template('reset_password.html', 
+                error="Passwords do not match.", token=token)
+        
+        # Update password and clear token
         conn = database.get_db_connection()
-        conn.execute("UPDATE faculty SET password = ? WHERE email = ?", (new_password, email))
+        conn.execute("UPDATE FACULTY SET password = ? WHERE email = ?", 
+                    (new_password, email))
         conn.commit()
         conn.close()
-        return redirect(url_for('login'))
-
-    return render_template('reset_password.html')
+        
+        database.clear_password_token(email)
+        
+        return render_template('login.html', 
+            success="Password has been reset successfully. Please login with your new password.")
+    
+    return render_template('reset_password.html', token=token)
 
 
 

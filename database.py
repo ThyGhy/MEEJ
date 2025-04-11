@@ -47,20 +47,44 @@ def fetch_exams():
     return exams
 
 def create_password_reset_token(email):
+    """Create a password reset token that expires in 1 hour."""
     token = str(uuid.uuid4())
     created_at = datetime.datetime.utcnow()
     conn = get_db_connection()
-    conn.execute("INSERT INTO password_resets (email, token, created_at) VALUES (?, ?, ?)", 
-                 (email, token, created_at))
+    
+    # Delete any existing tokens for this email
+    conn.execute("DELETE FROM PASSWORD_TOKENS WHERE email = ?", (email,))
+    
+    # Create new token
+    conn.execute("INSERT INTO PASSWORD_TOKENS (email, token, created_at) VALUES (?, ?, ?)", 
+                (email, token, created_at))
     conn.commit()
     conn.close()
     return token
 
 def get_email_by_token(token):
+    """Get email by token if it hasn't expired (1 hour validity)."""
     conn = get_db_connection()
-    result = conn.execute("SELECT email, created_at FROM password_resets WHERE token = ?", (token,)).fetchone()
+    one_hour_ago = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+    
+    result = conn.execute("""
+        SELECT email, created_at 
+        FROM PASSWORD_TOKENS 
+        WHERE token = ? AND created_at > ?
+    """, (token, one_hour_ago)).fetchone()
+    
     conn.close()
-    return result
+    
+    if result:
+        return {'email': result['email'], 'created_at': result['created_at']}
+    return None
+
+def clear_password_token(email):
+    """Clear the password reset token after successful reset."""
+    conn = get_db_connection()
+    conn.execute("DELETE FROM PASSWORD_TOKENS WHERE email = ?", (email,))
+    conn.commit()
+    conn.close()
 
 def register_for_exam(user_id, exam_id):
     """Register a user for an exam, with basic duplicate and capacity check."""
