@@ -131,13 +131,5 @@ def create_exam():
 
     return render_template('create_exam.html')
 
-
-
-#This is to Make Sure the Website Stays Up To Date.
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    subprocess.Popen(['/mnt/StoragePool/Github/update.sh'])
-    return 'Update triggered', 200
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
