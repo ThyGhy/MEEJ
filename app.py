@@ -114,7 +114,13 @@ def forgot_password():
         email = request.form['email'].strip().lower()
         print(f"Processing forgot password request for email: {email}")
         
+        # Check if email is a valid CSN email format
         student_match = re.match(r'^(\d{10})@student\.csn\.edu$', email)
+        faculty_match = re.match(r'.+@(csn\.edu|faculty\.csn\.edu)$', email)
+        
+        if not (student_match or faculty_match):
+            return render_template('forgot_password.html',
+                error="Invalid Email Address")
         
         if student_match:
             print("Student email detected - reset not allowed")
@@ -135,7 +141,7 @@ def forgot_password():
                 
                 # For now, let's show the link on the page instead of redirecting
                 return render_template('forgot_password.html',
-                    success=f"Follow This Link to Reset Your Password: <br><a href='{reset_link}'>Reset Password</a>")
+                    success=f"Follow This Link to Reset Your Password: <br><a href='{reset_link}' style='color: #00bfff;'>Reset Password</a>")
             except Exception as e:
                 print(f"Error generating reset token: {str(e)}")
                 return render_template('forgot_password.html',
