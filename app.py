@@ -39,8 +39,8 @@ def login():
                 return redirect(url_for('faculty_home'))
         
         print("Invalid credentials.")
-        return render_template('login.html', error="Invalid credentials.")
-    return render_template('login.html')
+        return render_template('login.html', error="Invalid credentials.", success=request.args.get('success'))
+    return render_template('login.html', success=request.args.get('success'))
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -188,8 +188,7 @@ def reset_password(token):
         
         database.clear_password_token(email)
         
-        return render_template('login.html', 
-            success="Password Reset")
+        return redirect(url_for('login', success="Password Reset"))
     
     return render_template('reset_password.html', token=token)
 

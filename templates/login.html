@@ -15,6 +15,9 @@
 		{% if error %}
 		<p class="error-msg">{{ error }}</p>
 		{% endif %}
+		{% if success %}
+		<p class="success-msg">{{ success }}</p>
+		{% endif %}
 		<form method="POST" action="{{ url_for('login', user=user_type) }}">
 			<label for="email">Email:</label>
 			<input type="text" name="email" id="email" required placeholder="e.g. NSHE_ID@student.csn.edu/csn.edu">
