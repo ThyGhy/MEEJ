@@ -130,7 +130,7 @@ input[type="text"], input[type="password"],textarea {
 	padding-right: 0px;
 	padding-bottom: 0.8em;
 	padding-top: 0.8em;
-	margin-bottom: 25px;
+	margin-bottom: 15px;
 	box-shadow:none;
 	line-height:1.2em;
 	font-size:1em;
@@ -201,7 +201,7 @@ button[type="submit"] {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 15px;
 	width: 341px;
-	margin-top: 25px;
+	margin-top: 15px;
 	padding-left: 10px;
 	padding-right: 0px;
 	padding-bottom: 0.8em;
