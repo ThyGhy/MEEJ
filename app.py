@@ -135,7 +135,7 @@ def forgot_password():
                 
                 # For now, let's show the link on the page instead of redirecting
                 return render_template('forgot_password.html',
-                    success=f"Click the link below to reset your password:<br><a href='{reset_link}'>Reset Password</a>")
+                    success=f"Follow This Link to Reset Your Password: <br><a href='{reset_link}'>Reset Password</a>")
             except Exception as e:
                 print(f"Error generating reset token: {str(e)}")
                 return render_template('forgot_password.html',
