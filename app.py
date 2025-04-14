@@ -209,5 +209,11 @@ def create_exam():
 
     return render_template('create_exam.html')
 
+@app.route('/registered_exams')
+def registered_exams():
+    if session.get('role') != 'student':
+        return redirect(url_for('login'))
+    return render_template('registered_exams.html')
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

@@ -6,7 +6,7 @@
     	<title>Registered Exams (MEEJ)</title>
     	<meta name="viewport" content="width=device-width">
 
-    	<link rel="stylesheet" href="sheet-styles.css">
+    	<link rel="stylesheet" href="{{ url_for('static', filename='sheet-styles.css') }}">
 
     	<!-- Add icon library -->
 		<script src="https://kit.fontawesome.com/515a911ad3.js" crossorigin="anonymous"></script>
@@ -17,10 +17,10 @@
 
 	<body>
     	<div class="header-bar">
-        	<div class="user-name">session.name
-        	<a href="student_home.html">home</a> <a href="logout.html">logout</a>
+        	<div class="user-name">{{ session.name }}
+        	<a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('logout') }}">logout</a>
         	</div>
-        	<div class="user-email">session.email</div>
+        	<div class="user-email">{{ session.email }}</div>
    	 	</div>
 
     	<div class="container-exams content">
@@ -33,6 +33,7 @@
 			       	<th>Room</th>
 			       	<th>Proctor</th>
 			       	<th>Exam Method</th>
+			       	<th>Action</th>
 			    </tr>
 			    <tr>
 			       	<td>GEOL 101</td>
@@ -41,8 +42,7 @@
 			       	<td>West Charleston Bldg H 202</td>
 			       	<td>Maurion Herring</td>
 			       	<td>In-Person</td>
-			       	<td><button class="btn"><i class="fa-solid fa-xmark"></i></button>
-
+			       	<td><button class="btn"><i class="fa-solid fa-xmark"></i></button></td>
 			    </tr>
 			    <tr>
 			       	<td>MATH 127</td>
@@ -51,7 +51,7 @@
 			       	<td>North Las Vegas Bldg H 305</td>
 			       	<td>Elaine Hernie</td>
 			       	<td>In-Person</td>
-			       	<td><button class="btn"><i class="fa-solid fa-xmark"></i></button>
+			       	<td><button class="btn"><i class="fa-solid fa-xmark"></i></button></td>
 			    </tr>
        	 	</table>
     	</div>

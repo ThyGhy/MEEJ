@@ -17,17 +17,17 @@
 
 	<body>
     	<div class="header-bar">
-        	<div class="user-name">session.name
-        	<a href="student_home.html">home</a> <a href="logout.html">logout</a>
+        	<div class="user-name">{{ session.name }}
+        	<a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('login') }}">logout</a>
         	</div>
-        	<div class="user-email">session.email</div>
+        	<div class="user-email">{{ session.email }}</div>
    	 	</div>
 
     	<div class="container-home content">
        	 	<h1>Student Homepage</h1>
 
-    		<button class="btn"><i class="fa-solid fa-magnifying-glass"></i><br><a href="register_exam.html">Register Exam</a></button>
-    		<button class="btn"><i class="fa-solid fa-check"></i><br><a href="registered_exams.html">Registered Exams</a></button>
+    		<button class="btn"><i class="fa-solid fa-magnifying-glass"></i><br><a href="{{ url_for('register_exam') }}">Register Exam</a></button>
+    		<button class="btn"><i class="fa-solid fa-check"></i><br><a href="{{ url_for('registered_exams') }}">Registered Exams</a></button>
     	</div>
 	</body>
 </html>
