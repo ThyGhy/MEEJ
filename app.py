@@ -7,9 +7,6 @@ import datetime
 app = Flask(__name__)
 app.secret_key = "MEEJ"
 
-# Initialize database when app starts
-database.init_db()
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
