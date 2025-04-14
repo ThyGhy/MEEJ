@@ -100,13 +100,47 @@ h1 {
 	margin-top: 200px;
 	background-color: white;
 	max-width: 422px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
-.container-home h1, .container-exams h1 {
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.container-home h1 {
 	text-align: center;
 	font-size: 25px;
 	color: black;
 	margin-bottom: 25px;
+}
+
+.container-home .btn {
+    background: none;
+    border: 1px solid grey;
+    border-radius: 10px;
+    width: 200px;
+    height: 200px;
+    margin: 4px;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.container-home .btn i {
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.container-home .btn a {
+    color: black;
+    text-decoration: none;
+}
+
+.container-home .btn a:hover {
+    color: blue;
 }
 
 .container-exams {
@@ -210,5 +244,30 @@ table .btn {
 
 .btn a:hover {
 	color: blue;
+}
+
+/* Registered Exams specific styles */
+.registered-exams h1 {
+    text-align: center;
+    margin: 20px 0;
+    font-size: 24px;
+    color: black;
+}
+
+/* Table X button style */
+table .btn {
+    background: none;
+    border: none;
+    color: black;
+    cursor: pointer;
+    font-family: Arial;
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    display: block;
+    text-align: center;
 }
 

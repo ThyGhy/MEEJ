@@ -26,8 +26,10 @@
     	<div class="container-home content">
        	 	<h1>Student Homepage</h1>
 
-    		<button class="btn"><i class="fa-solid fa-magnifying-glass"></i><br><a href="{{ url_for('register_exam') }}">Register Exam</a></button>
-    		<button class="btn"><i class="fa-solid fa-check"></i><br><a href="{{ url_for('registered_exams') }}">Registered Exams</a></button>
+    		<div class="button-container">
+    			<button class="btn"><i class="fa-solid fa-magnifying-glass"></i><br><a href="{{ url_for('register_exam') }}">Register Exam</a></button>
+    			<button class="btn"><i class="fa-solid fa-check"></i><br><a href="{{ url_for('registered_exams') }}">Registered Exams</a></button>
+    		</div>
     	</div>
 	</body>
 </html>
