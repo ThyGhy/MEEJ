@@ -1,55 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Exam Registration Page</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/MainSite.css') }}">
-    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-</head>
-<body>
-    <style>
-        .header-bar {
-            background-color: #ffd41c;
-            height: 50px;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            box-sizing: border-box;
-            z-index: 1000;
-        }
+	<head>
+    	<meta charset="UTF-8">
 
-            .header-bar .user-name {
-                font-size: 16px;
-                font-weight: bold;
-                color: #000;
-            }
+    	<title>Register Exam (MEEJ)</title>
+    	<meta name="viewport" content="width=device-width">
 
-            .header-bar .user-email {
-                font-size: 14px;
-                color: #000;
-            }
+    	<link rel="stylesheet" href="sheet-styles.css">
 
-    </style>
-    <div class="header-bar">
-        <div class="user-name">{{ session.name }}</div>
-        <div class="user-email">{{ session.email }}</div>
-    </div>
-    <div class="container-elem" style="margin-top: 100px;">
-        <h1>Register for an Exam</h1>
-        {% if error %}
-        <p class="error-msg">{{ error }}</p>
-        {% endif %}
-    </div>
-    <p style="margin-top: 50px; font-size: 12px; text-align: center; color: #FFFFFF;">
-      Disclaimer: This site is part of a student project and is not officially affiliated with College of Southern Nevada (CSN).
-    </p>
-</body>
+    	<!-- favicon code below-->
+    	<link rel="icon" type="image/png" href="https://i.imgur.com/yIhrhqE.png"/>
+    </head>
+
+	<body>
+    	<div class="header-bar">
+        	<div class="user-name">session.name
+        	<a href="student_home.html">home</a> <a href="logout.html">logout</a>
+        	</div>
+        	<div class="user-email">session.email</div>
+   	 	</div>
+    	<div class="container-elem content">
+			<input type="checkbox" id="toggler1" checked/>
+			<label for="toggler1">Subject</label>
+
+			<div class="toggler1">
+    			<label for="subject">Subject</label>
+    			<select name="subject" id="subject">
+    				<option value="CS">CS</option>
+    				<option value="CIT">CIT</option>
+    				<option value="CSCO">CSCO</option>
+    				<option value="CSEC">CSEC</option>
+    				<option value="IS">IS</option>
+    				<option value="GIS">GIS</option>
+    			</select>
+				<br>
+
+				<label for="courseNum">Course Number</label>
+				<input type="text" name="courseNum" id="courseNum">
+				<br>
+
+				<label for="campus">Campus</label>
+				<button name="campus" type="button" value="West Charleston">West Charleston</button>
+				<button name="campus" type="button" value="North Las Vegas">North Las Vegas</button>
+				<button name="campus" type="button" value="Henderson">Henderson</button>
+			</div>
+
+			<br>
+    		<input type="checkbox" id="toggler2" checked/>
+			<label for="toggler2">Date Search</label>
+
+			<div class="toggler2">
+    			<label for="daysWeek">Days of Week</label>
+    			<br>
+    			<label for="Monday">Mon</label>
+    			<input type="checkbox" name="Monday" id="Monday">
+    			<label for="Tuesday">Tue</label>
+    			<input type="checkbox" name="Tuesday" id="Tuesday">
+    			<label for="Wednesday">Wed</label>
+    			<input type="checkbox" name="Wednesday" id="Wednesday">
+    			<label for="Thursday">Thu</label>
+    			<input type="checkbox" name="Thursday" id="Thursday">
+    			<label for="Friday">Fri</label>
+    			<input type="checkbox" name="Friday" id="Friday">
+
+				<br><br>
+				<p style="margin-left:50px;">Date Search</p>
+				<label for="minDate">From:</label>
+				<input type="date" value="2025-14-4" />
+				<label for="maxDate">To:</label>
+				<input type="date" value="2025-14-4" />
+			</div>
+
+			<br>
+			<button type="submit" style="margin:20px;">Search</button>
+    		<br>
+    	</div>
+	</body>
 </html>

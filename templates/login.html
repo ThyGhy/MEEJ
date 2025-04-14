@@ -1,41 +1,37 @@
 <!-- hi meej blehhhh -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<title>Exam Sign-in (MEEJ)</title>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="modernizr.custom.40753.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/MainSite.css') }}">
-    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-</head>
-<body>
-	<div class="container-elem">
-		<img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/College_of_Southern_Nevada_%28logo%29.svg/1200px-College_of_Southern_Nevada_%28logo%29.svg.png" style="width:250px;height:auto;">
-		<h1>Exam Sign-in</h1>
-		{% if error %}
-		<p class="error-msg">{{ error }}</p>
-		{% endif %}
-		{% if success %}
-		<p class="success-msg">{{ success }}</p>
-		{% endif %}
-		<form method="POST" action="{{ url_for('login', user=user_type) }}">
-			<label for="email">Email:</label>
-			<input type="text" name="email" id="email" required placeholder="e.g. NSHE_ID@student.csn.edu/csn.edu">
-			<br>
-			<label for="password">Password (NSHE):</label>
-			<input type="password" name="password" id="password" required placeholder="e.g. NSHE_ID/Faculty Password">
-			<br><br>
-			<button type="submit">Sign in</button>
-			<br><br>
-			<a href="{{ url_for('forgot_password') }}" style="margin: 15px; text-align: center;">Forgot password?</a>
-		</form>
-	</div>
-	<p style="margin:15px;text-align:center;">Don't have an account? <a href="{{ url_for('signup') }}">Register</a></p>
-	<p style="margin-top: 50px; font-size: 12px; text-align: center; color: #FFFFFF;">
-		Disclaimer: This site is part of a student project and is not officially affiliated with College of Southern Nevada (CSN).
-	</p>
-</body>
-</html>
+	<head>
+		<title>CIT Exam Sign-in (MEEJ)</title>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<script src="modernizr.custom.40753.js"></script>
+
+		<link rel="stylesheet" href="login-styles.css">
+
+		<!-- favicon code below-->
+    	<link rel="icon" type="image/png" href="https://i.imgur.com/yIhrhqE.png"/>
+	</head>
+
+	<body>
+		<div class="container-elem">
+			<img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/College_of_Southern_Nevada_%28logo%29.svg/1200px-College_of_Southern_Nevada_%28logo%29.svg.png"
+			style="width:250px;height:auto;">
+			<h1>CIT Exam Sign-in</h1>
+			<form method="POST" action="{{ url_for('login') }}">
+				<label for="email">Email:</label>
+				<input type="text" name="email" id="email" required>
+				<br>
+				<label for="password">Password (NSHE):</label>
+				<input type="password" name="password" id="password" required>
+				<br><br>
+				<button type="submit">Sign in</button>
+				<br><br>
+
+				<!-- the following line can be removed: -->
+				<a href="https://at.csn.edu/csn-password-admin" style="margin:15px;">Forgot password?</a><br>
+				</form>
+		</div>
+		<p style="margin:15px;text-align:center;">Don't have an account? <a href="signup.html">Register</a></p>
+	</body>

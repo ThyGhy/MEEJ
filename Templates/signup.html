@@ -3,26 +3,29 @@
 <html lang="en">
 	<head>
 		<title>CIT Exam Sign-up (MEEJ)</title>
-		
+
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width">
 		<script src="modernizr.custom.40753.js"></script>
-		
+
 		<link rel="stylesheet" href="login-styles.css">
+
+		<!-- favicon code below-->
+    	<link rel="icon" type="image/png" href="https://i.imgur.com/yIhrhqE.png"/>
 	</head>
-	
+
 	<body>
 		<div class="container-elem">
-			<img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/College_of_Southern_Nevada_%28logo%29.svg/1200px-College_of_Southern_Nevada_%28logo%29.svg.png" 
+			<img src="https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/College_of_Southern_Nevada_%28logo%29.svg/1200px-College_of_Southern_Nevada_%28logo%29.svg.png"
 			style="width:250px;height:auto;">
 			<h1>CIT Exam Sign-up</h1>
 			<form method="POST" action="{{ url_for('signup') }}">
 				<label for="fullname">Name:</label>
 				<input type="text" name="fullname" id="fullname" required>
-				<br> 
+				<br>
 				<label for="email">Email:</label>
 				<input type="text" name="email" id="email" required>
-				<br> 
+				<br>
 				<label for="password">NSHE ID:</label>
 				<input type="password" name="password" id="password" required>
 				<br><br>
@@ -30,5 +33,5 @@
 				<br><br>
 				</form>
 		</div>
-		<p style="margin:15px;text-align:center;"><a href="/login">Log in</a></p>
+		<p style="margin:15px;text-align:center;"><a href="login.html">Log in</a></p>
 	</body>

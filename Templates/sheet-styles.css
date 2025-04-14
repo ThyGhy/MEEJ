@@ -1,0 +1,189 @@
+/* sheet-styles.css */
+
+/* Visual reset - global reset */
+* {
+	margin:0;
+	padding:0;
+	box-sizing: border-box;
+	font-family: arial;
+}
+
+.header-bar {
+	background-color: #084c94;
+	border-top: 10px solid #ffd41c; 
+	height: 50px;
+	width: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 20px;
+	box-sizing: border-box;
+	z-index: 1000;
+}
+
+.user-name {
+	font-family: arial;
+	font-size: 18px;
+	font-weight: bold;
+	color: white;
+}
+
+.user-name a {
+	color: white;
+	font-weight: normal;
+	margin-left: 10px;
+	font-size: 17px;
+}
+
+.user-name a:hover {
+	color: #ffd41c;
+}
+
+.user-email {
+	font-family: arial;
+	font-size: 16px;
+	color: white;
+}
+
+.button {
+	display: inline-block;
+	margin: 20px;
+	padding: 15px 30px;
+	background-color: #242526;
+	color: white;
+	text-decoration: none;
+	font-size: 16px;
+}
+
+.button:hover {
+	background-color: #1d1e21;
+}
+
+label {
+	color: black;
+	margin-left: 50px;  /* need to change this lol */
+	line-height: 30px;
+}
+
+label[type="checkbox"] {
+	margin-left: 10px;
+}
+
+.content {
+	margin-top: 70px;
+}
+
+.container-elem {
+   margin-left: auto;
+   margin-right: auto;
+   margin-top: 125px;
+   background-color: #D3D3D3;
+   max-width: 750px;
+   border-top: 30px solid #084c94;
+}
+
+.container-home {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 200px;
+	background-color: white;
+	max-width: 422px;
+}
+
+.container-home h1, .container-exams h1 {
+	text-align: center;
+	font-size: 25px;
+	color: black;
+	margin-bottom: 25px;
+}
+
+.container-exams {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 200px;
+	background-color: white;
+	max-width: 800px;
+}
+
+.container-exams .btn, .container-exams .btn i {
+	width: 10px;
+	height: 10px;
+	font-size: 20px;
+	border: none;
+	background-color: default;
+}
+
+.container-exams .btn i:hover {
+	color: red;
+}
+
+th {
+	background-color: #D3D3D3;
+	font-weight: normal;
+	text-align: left;
+	padding: 3px;
+	line-height: 15px;
+}
+
+td {
+	background-color: #f4f4f4;
+}
+
+#toggler1, #toggler2 {
+ display: none;
+}
+
+#toggler1 + label, #toggler2 + label {
+  cursor: pointer;
+}
+
+#toggler1 + label:before, #toggler2 + label:before {
+  font-family: 'Glyphicons Halflings';
+  content: ">";
+  display: inline-block;
+  transform: rotate(90deg);
+  transition: transform .3s;
+  padding: 1em;
+}
+
+#toggler1 ~ div, #toggler2 ~ div {
+  display: none;
+  padding-left: 1em;
+}
+
+#toggler1:checked ~ div, #toggler2:checked ~ div {
+  display: block;
+}
+
+#toggler1:checked + label:before, #toggler2:checked + label:before {
+  transform: rotate(0);
+}
+
+.btn {
+	color: black;
+	font-size: 20px;
+	cursor: pointer;
+	border: 1px solid grey;
+	border-radius: 10px;
+	width: 200px;
+	height: 200px;
+	margin-left: 4px;
+	margin-right: 4px;
+}
+
+.btn i {
+	font-size: 40px;
+	margin-bottom: 15px;
+}
+
+.btn a {
+	color: black;
+}
+
+.btn a:hover {
+	color: blue;
+}
+
