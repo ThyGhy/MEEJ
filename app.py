@@ -39,7 +39,7 @@ def login():
                 return redirect(url_for('faculty_home'))
         
         print("Invalid credentials.")
-        return render_template('login.html', error="Invalid credentials.", success=request.args.get('success'))
+        return render_template('login.html', error="Invalid credentials.")
     return render_template('login.html', success=request.args.get('success'))
 
 @app.route('/signup', methods=['GET', 'POST'])
