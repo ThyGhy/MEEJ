@@ -36,14 +36,15 @@ display: block;
 }
 
 .container-elem {
-   margin-left: auto;
-   margin-right: auto;
-   margin-top: 125px;
-   background-color: white;
-   max-width: 500px;
-   border: 1px solid black;
-   border-radius: 5px;
-   box-shadow: 0px 10px 6px -6px black;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 125px;
+	background-color: white;
+	max-width: 500px;
+	border: 1px solid black;
+	border-radius: 5px;
+	box-shadow: 0px 10px 6px -6px black;
+	padding-bottom: 20px; /* Added extra padding at the bottom */
 }
 
 .container-elem img {
@@ -60,17 +61,41 @@ label[for=fullname] {
 	line-height: 30px;
 }
 
+label[for=firstname] {
+	color: black;
+	margin-left: 90px;
+	line-height: 30px;
+}
+
+label[for=lastname] {
+	color: black;
+	margin-left: 90px;
+	line-height: 30px;
+}
+
 label[for=email] {
 	color: black;
-	margin-left: 90px;  /* need to change this lol */
+	margin-left: 90px; /* need to change this lol */
 	line-height: 30px;
 }
 
 label[for=password] {
 	color: black;
-	margin-left: 90px;  /* this too */
+	margin-left: 90px; /* this too */
 	line-height: 30px;
 }
+
+.error-msg {
+	color: red;
+	text-align: center;
+}
+
+.success-msg {
+    color: green;
+    text-align: center;
+    font-weight: bold;
+}
+
 
 /*VisualRefresh*/
 h1 {
@@ -111,7 +136,7 @@ input[type="text"], input[type="password"], input[type="fullname"],textarea {
 	padding-right: 0px;
 	padding-bottom: 0.8em;
 	padding-top: 0.8em;
-	margin-bottom: 25px;
+	margin-bottom: 15px;
 	box-shadow:none;
 	line-height:1.2em;
 	font-size:1em;
@@ -182,7 +207,7 @@ button[type="submit"] {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 15px;
 	width: 341px;
-	margin-top: 25px;
+	margin-top: 15px;
 	padding-left: 10px;
 	padding-right: 0px;
 	padding-bottom: 0.8em;

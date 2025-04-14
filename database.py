@@ -1,26 +1,90 @@
 import sqlite3
+import uuid
+import datetime
 
 DATABASE = 'ExamRegistration.db'
 
 def get_db_connection():
-    """Create and return a connection to the SQLite database."""
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row  # Allows you to access columns by name
+    conn.row_factory = sqlite3.Row
     return conn
 
-def get_user_by_email(email):
-    """Retrieve a user record by email."""
+def get_student_by_email(email):
     conn = get_db_connection()
-    user = conn.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+    student = conn.execute("SELECT * FROM students WHERE email = ?", (email,)).fetchone()
     conn.close()
-    return user
+    return student
 
+def add_student(name, firstname, lastname, email, password):
+    conn = get_db_connection()
+    conn.execute(
+        "INSERT INTO students (name, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)",
+        (name, firstname, lastname, email, password)
+    )
+    conn.commit()
+    conn.close()
+
+def get_faculty_by_email(email):
+    conn = get_db_connection()
+    faculty = conn.execute("SELECT * FROM faculty WHERE email = ?", (email,)).fetchone()
+    conn.close()
+    return faculty
+
+def add_faculty(name, firstname, lastname, email, password):
+    conn = get_db_connection()
+    conn.execute(
+        "INSERT INTO faculty (name, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)",
+        (name, firstname, lastname, email, password)
+    )
+    conn.commit()
+    conn.close()
+    
 def fetch_exams():
     """Retrieve all exam records."""
     conn = get_db_connection()
     exams = conn.execute("SELECT * FROM exams").fetchall()
     conn.close()
     return exams
+
+def create_password_reset_token(email):
+    """Create a password reset token that expires in 1 hour."""
+    token = str(uuid.uuid4())
+    created_at = datetime.datetime.utcnow()
+    conn = get_db_connection()
+    
+    # Delete any existing tokens for this email
+    conn.execute("DELETE FROM PASSWORD_TOKENS WHERE email = ?", (email,))
+    
+    # Create new token
+    conn.execute("INSERT INTO PASSWORD_TOKENS (email, token, created_at) VALUES (?, ?, ?)", 
+                (email, token, created_at))
+    conn.commit()
+    conn.close()
+    return token
+
+def get_email_by_token(token):
+    """Get email by token if it hasn't expired (1 hour validity)."""
+    conn = get_db_connection()
+    one_hour_ago = datetime.datetime.utcnow() - datetime.timedelta(hours=1)
+    
+    result = conn.execute("""
+        SELECT email, created_at 
+        FROM PASSWORD_TOKENS 
+        WHERE token = ? AND created_at > ?
+    """, (token, one_hour_ago)).fetchone()
+    
+    conn.close()
+    
+    if result:
+        return {'email': result['email'], 'created_at': result['created_at']}
+    return None
+
+def clear_password_token(email):
+    """Clear the password reset token after successful reset."""
+    conn = get_db_connection()
+    conn.execute("DELETE FROM PASSWORD_TOKENS WHERE email = ?", (email,))
+    conn.commit()
+    conn.close()
 
 def register_for_exam(user_id, exam_id):
     """Register a user for an exam, with basic duplicate and capacity check."""
@@ -59,18 +123,3 @@ def register_for_exam(user_id, exam_id):
     conn.close()
     return True, "Registration successful."
 
-def add_email(email, password):
-    conn = get_db_connection()
-    # Insert with a default role for testing, e.g., "tester"
-    conn.execute(
-        "INSERT INTO users (email, password, role) VALUES (?, ?, ?)",
-        (email, password, "tester")
-    )
-    conn.commit()
-    conn.close()
-
-def fetch_emails():
-    conn = get_db_connection()
-    emails = conn.execute("SELECT email FROM users").fetchall()
-    conn.close()
-    return emails

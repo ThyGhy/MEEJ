@@ -1,1 +1,1 @@
-MEEJ
+MEEJ Project.

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exam Proctor Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/MainSite.css') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
+</head>
+<body>
+    <style>
+        .header-bar {
+            background-color: #ffd41c;
+            height: 50px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+            .header-bar .user-name {
+                font-size: 16px;
+                font-weight: bold;
+                color: #000;
+            }
+
+            .header-bar .user-email {
+                font-size: 14px;
+                color: #000;
+            }
+    </style>
+    <div class="header-bar">
+        <div class="user-name">{{ session.name }}</div>
+        <div class="user-email">{{ session.email }}</div>
+    </div>
+
+    <div class="container-elem" style="margin-top: 100px;">
+        <h1>Create an Exam</h1>
+    </div>
+    <p style="margin-top: 50px; font-size: 12px; text-align: center; color: #FFFFFF;">
+        Disclaimer: This site is part of a student project and is not officially affiliated with College of Southern Nevada (CSN).
+    </p>
+</body>
+</html>
