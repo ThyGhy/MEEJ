@@ -5,11 +5,9 @@
     	<title>Registered Exams (MEEJ)</title>
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     	<link rel="stylesheet" href="{{ url_for('static', filename='CSS/sheet-styles.css') }}">
-    	<!-- Add icon library -->
-		<script src="https://kit.fontawesome.com/515a911ad3.js" crossorigin="anonymous"></script>
-    	<!-- favicon code below-->
+    	<script src="https://kit.fontawesome.com/515a911ad3.js" crossorigin="anonymous"></script>
     	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-    </head>
+	</head>
 
 	<body>
     	<div class="header-bar">
@@ -19,9 +17,9 @@
         	<div class="user-email">{{ session.email }}</div>
    	 	</div>
 
-    	<div class="container-elem content">
-    	    <h1>Registered Exams</h1>
-       		<table class="exam-table">
+    	<div class="content">
+            <h1>Registered Exams</h1>
+       		<table>
 				<tr>
 			    	<th>Course</th>
 			       	<th>Days & Times</th>
@@ -38,7 +36,7 @@
 			       	<td>West Charleston Bldg H 202</td>
 			       	<td>Maurion Herring</td>
 			       	<td>In-Person</td>
-			       	<td><button class="btn"><i class="fa-solid fa-xmark"></i></button></td>
+			       	<td><button class="btn">✕</button></td>
 			    </tr>
 			    <tr>
 			       	<td>MATH 127</td>
@@ -47,7 +45,7 @@
 			       	<td>North Las Vegas Bldg H 305</td>
 			       	<td>Elaine Hernie</td>
 			       	<td>In-Person</td>
-			       	<td><button class="btn"><i class="fa-solid fa-xmark"></i></button></td>
+			       	<td><button class="btn">✕</button></td>
 			    </tr>
        	 	</table>
     	</div>
