@@ -14,10 +14,10 @@
 
 	<body>
     	<div class="header-bar">
-        	<div class="user-name">session.name
-        	<a href="student_home.html">home</a> <a href="logout.html">logout</a>
+        	<div class="user-name">{{ session.name }}
+        	<a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('login') }}">logout</a>
         	</div>
-        	<div class="user-email">session.email</div>
+        	<div class="user-email">{{ session.email }}</div>
    	 	</div>
     	<div class="container-elem content">
 			<input type="checkbox" id="toggler1" checked/>

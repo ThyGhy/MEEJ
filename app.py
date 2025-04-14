@@ -213,7 +213,11 @@ def create_exam():
 def registered_exams():
     if session.get('role') != 'student':
         return redirect(url_for('login'))
-    return render_template('registered_exams.html')
+    
+    # Get registered exams for the student (placeholder for now)
+    registered_exams = []  # This will be replaced with actual database query later
+    
+    return render_template('registered_exams.html', registered_exams=registered_exams)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
