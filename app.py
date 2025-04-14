@@ -219,5 +219,10 @@ def registered_exams():
     
     return render_template('registered_exams.html', registered_exams=registered_exams)
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login', success="You have been logged out successfully."))
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
