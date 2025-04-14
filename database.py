@@ -1,10 +1,26 @@
 import sqlite3
 import uuid
 import datetime
+import os
 
 DATABASE = 'ExamRegistration.db'
 
+def init_db():
+    """Initialize the database and create tables if they don't exist."""
+    conn = get_db_connection()
+    
+    # Read the SQL file
+    with open('PrimarySQL.sql', 'r') as f:
+        sql_script = f.read()
+    
+    # Execute the SQL script
+    conn.executescript(sql_script)
+    conn.commit()
+    conn.close()
+    print("Database initialized successfully")
+
 def get_db_connection():
+    """Get a database connection. Creates the database file if it doesn't exist."""
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
