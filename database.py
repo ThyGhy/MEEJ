@@ -52,8 +52,6 @@ def add_student(firstname, lastname, email, password):
     """Add a new student with authentication."""
     conn = get_db_connection()
     try:
-        conn.execute("BEGIN TRANSACTION")
-        
         # First create authentication entry
         conn.execute(
             "INSERT INTO AUTHENTICATION (Email, Password, Role) VALUES (?, ?, ?)",
@@ -69,11 +67,13 @@ def add_student(firstname, lastname, email, password):
         conn.commit()
         return True, "Student added successfully"
     except sqlite3.IntegrityError as e:
+        print(f"Database integrity error: {str(e)}")  # Debug logging
         conn.rollback()
         if "UNIQUE constraint failed: AUTHENTICATION.Email" in str(e):
             return False, "Error: Email already exists"
-        return False, f"Error: {str(e)}"
+        return False, f"Database error: {str(e)}"
     except Exception as e:
+        print(f"Unexpected error: {str(e)}")  # Debug logging
         conn.rollback()
         return False, f"Error: {str(e)}"
     finally:
@@ -83,8 +83,6 @@ def add_faculty(firstname, lastname, email, password):
     """Add a new faculty member with authentication."""
     conn = get_db_connection()
     try:
-        conn.execute("BEGIN TRANSACTION")
-        
         # First create authentication entry
         conn.execute(
             "INSERT INTO AUTHENTICATION (Email, Password, Role) VALUES (?, ?, ?)",
@@ -100,11 +98,13 @@ def add_faculty(firstname, lastname, email, password):
         conn.commit()
         return True, "Faculty added successfully"
     except sqlite3.IntegrityError as e:
+        print(f"Database integrity error: {str(e)}")  # Debug logging
         conn.rollback()
         if "UNIQUE constraint failed: AUTHENTICATION.Email" in str(e):
             return False, "Error: Email already exists"
-        return False, f"Error: {str(e)}"
+        return False, f"Database error: {str(e)}"
     except Exception as e:
+        print(f"Unexpected error: {str(e)}")  # Debug logging
         conn.rollback()
         return False, f"Error: {str(e)}"
     finally:
