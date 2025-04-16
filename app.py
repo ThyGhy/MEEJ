@@ -210,5 +210,11 @@ def logout():
     session.clear()
     return redirect(url_for('login', success="You have been logged out successfully."))
 
+@app.route('/create_exam', methods=['GET', 'POST'])
+def create_exam():
+    if 'user_id' not in session or session.get('role') != 'Faculty':
+        return redirect(url_for('login'))
+    return render_template('create_exam.html')
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
