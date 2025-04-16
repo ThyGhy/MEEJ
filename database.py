@@ -10,16 +10,16 @@ def get_db_connection():
     return conn
 
 def get_user_by_email(email):
-    """Get user from Authentication table."""
+    """Get user from Users table."""
     conn = get_db_connection()
     user = conn.execute("""
-        SELECT * FROM AUTHENTICATION WHERE Email = ?
+        SELECT * FROM USERS WHERE Email = ?
     """, (email,)).fetchone()
     conn.close()
     return user
 
 def get_student_details(student_id):
-    """Get student details including authentication info."""
+    """Get student details including user info."""
     conn = get_db_connection()
     student = conn.execute("""
         SELECT 
@@ -27,14 +27,14 @@ def get_student_details(student_id):
             a.Email,
             a.Role
         FROM STUDENTS s
-        JOIN AUTHENTICATION a ON s.StudentID = a.UserID
+        JOIN USERS a ON s.StudentID = a.UserID
         WHERE s.StudentID = ?
     """, (student_id,)).fetchone()
     conn.close()
     return student
 
 def get_faculty_details(faculty_id):
-    """Get faculty details including authentication info."""
+    """Get faculty details including user info."""
     conn = get_db_connection()
     try:
         faculty = conn.execute("""
@@ -43,7 +43,7 @@ def get_faculty_details(faculty_id):
                 a.Email,
                 a.Role
             FROM FACULTY f
-            JOIN AUTHENTICATION a ON f.FacultyID = a.UserID
+            JOIN USERS a ON f.FacultyID = a.UserID
             WHERE f.FacultyID = ?
         """, (faculty_id,)).fetchone()
         return faculty
@@ -54,12 +54,12 @@ def get_faculty_details(faculty_id):
         conn.close()
 
 def add_student(firstname, lastname, email, password):
-    """Add a new student with authentication."""
+    """Add a new student with user account."""
     conn = get_db_connection()
     try:
-        # First create authentication entry
+        # First create user entry
         conn.execute(
-            "INSERT INTO AUTHENTICATION (Email, Password, Role) VALUES (?, ?, ?)",
+            "INSERT INTO USERS (Email, Password, Role) VALUES (?, ?, ?)",
             (email, password, 'Student')
         )
         user_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
@@ -74,7 +74,7 @@ def add_student(firstname, lastname, email, password):
     except sqlite3.IntegrityError as e:
         print(f"Database integrity error: {str(e)}")  # Debug logging
         conn.rollback()
-        if "UNIQUE constraint failed: AUTHENTICATION.Email" in str(e):
+        if "UNIQUE constraint failed: USERS.Email" in str(e):
             return False, "Error: Email already exists"
         return False, f"Database error: {str(e)}"
     except Exception as e:
@@ -85,18 +85,18 @@ def add_student(firstname, lastname, email, password):
         conn.close()
 
 def add_faculty(firstname, lastname, email, password):
-    """Add a new faculty member with authentication."""
+    """Add a new faculty member with user account."""
     print(f"Starting faculty registration process for {email}")  # Debug log
     conn = get_db_connection()
     try:
-        # First create authentication entry
-        print("Creating authentication entry")  # Debug log
+        # First create user entry
+        print("Creating user entry")  # Debug log
         conn.execute(
-            "INSERT INTO AUTHENTICATION (Email, Password, Role) VALUES (?, ?, ?)",
+            "INSERT INTO USERS (Email, Password, Role) VALUES (?, ?, ?)",
             (email, password, 'Faculty')
         )
         user_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
-        print(f"Created authentication entry with ID: {user_id}")  # Debug log
+        print(f"Created user entry with ID: {user_id}")  # Debug log
         
         # Then create faculty entry
         print("Creating faculty entry")  # Debug log
@@ -110,7 +110,7 @@ def add_faculty(firstname, lastname, email, password):
     except sqlite3.IntegrityError as e:
         print(f"Database integrity error: {str(e)}")  # Debug log
         conn.rollback()
-        if "UNIQUE constraint failed: AUTHENTICATION.Email" in str(e):
+        if "UNIQUE constraint failed: USERS.Email" in str(e):
             return False, "Error: Email already exists"
         return False, f"Database error: {str(e)}"
     except Exception as e:
@@ -125,8 +125,8 @@ def create_password_reset_token(email):
     token = str(uuid.uuid4())
     conn = get_db_connection()
     try:
-        # Verify email exists in Authentication
-        user = conn.execute("SELECT 1 FROM AUTHENTICATION WHERE Email = ?", (email,)).fetchone()
+        # Verify email exists in Users table
+        user = conn.execute("SELECT 1 FROM USERS WHERE Email = ?", (email,)).fetchone()
         if not user:
             return None
             
@@ -174,11 +174,11 @@ def mark_token_used(token):
     conn.close()
 
 def update_password(email, new_password):
-    """Update user's password in Authentication table."""
+    """Update user's password in Users table."""
     conn = get_db_connection()
     try:
         conn.execute(
-            "UPDATE AUTHENTICATION SET Password = ? WHERE Email = ?",
+            "UPDATE USERS SET Password = ? WHERE Email = ?",
             (new_password, email)
         )
         conn.commit()

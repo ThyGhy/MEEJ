@@ -1,0 +1,7 @@
+# This is a student project website
+User-agent: *
+Disallow: /
+X-Robots-Tag: noindex, nofollow
+
+# This is an educational project and not affiliated with CSN
+# For the official CSN website, please visit https://www.csn.edu/ 
