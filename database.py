@@ -48,34 +48,43 @@ def get_faculty_details(faculty_id):
     conn.close()
     return faculty
 
-def add_student(firstname, lastname, email, nshe_id):
+def add_student(firstname, lastname, email, password):
     """Add a new student with authentication."""
     conn = get_db_connection()
     try:
+        conn.execute("BEGIN TRANSACTION")
+        
         # First create authentication entry
         conn.execute(
             "INSERT INTO AUTHENTICATION (Email, Password, Role) VALUES (?, ?, ?)",
-            (email, nshe_id, 'Student')
+            (email, password, 'Student')
         )
         user_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
         
         # Then create student entry
         conn.execute(
-            "INSERT INTO STUDENTS (StudentID, FirstName, LastName, NSHEID) VALUES (?, ?, ?, ?)",
-            (user_id, firstname, lastname, nshe_id)
+            "INSERT INTO STUDENTS (StudentID, FirstName, LastName) VALUES (?, ?, ?)",
+            (user_id, firstname, lastname)
         )
         conn.commit()
         return True, "Student added successfully"
     except sqlite3.IntegrityError as e:
         conn.rollback()
-        return False, "Error: Email or NSHE ID already exists"
+        if "UNIQUE constraint failed: AUTHENTICATION.Email" in str(e):
+            return False, "Error: Email already exists"
+        return False, f"Error: {str(e)}"
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error: {str(e)}"
     finally:
         conn.close()
 
-def add_faculty(firstname, lastname, email, password, department=None):
+def add_faculty(firstname, lastname, email, password):
     """Add a new faculty member with authentication."""
     conn = get_db_connection()
     try:
+        conn.execute("BEGIN TRANSACTION")
+        
         # First create authentication entry
         conn.execute(
             "INSERT INTO AUTHENTICATION (Email, Password, Role) VALUES (?, ?, ?)",
@@ -85,14 +94,19 @@ def add_faculty(firstname, lastname, email, password, department=None):
         
         # Then create faculty entry
         conn.execute(
-            "INSERT INTO FACULTY (FacultyID, FirstName, LastName, Department) VALUES (?, ?, ?, ?)",
-            (user_id, firstname, lastname, department)
+            "INSERT INTO FACULTY (FacultyID, FirstName, LastName) VALUES (?, ?, ?)",
+            (user_id, firstname, lastname)
         )
         conn.commit()
         return True, "Faculty added successfully"
     except sqlite3.IntegrityError as e:
         conn.rollback()
-        return False, "Error: Email already exists"
+        if "UNIQUE constraint failed: AUTHENTICATION.Email" in str(e):
+            return False, "Error: Email already exists"
+        return False, f"Error: {str(e)}"
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error: {str(e)}"
     finally:
         conn.close()
 
