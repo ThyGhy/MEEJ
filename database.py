@@ -36,17 +36,22 @@ def get_student_details(student_id):
 def get_faculty_details(faculty_id):
     """Get faculty details including authentication info."""
     conn = get_db_connection()
-    faculty = conn.execute("""
-        SELECT 
-            f.*,
-            a.Email,
-            a.Role
-        FROM FACULTY f
-        JOIN AUTHENTICATION a ON f.FacultyID = a.UserID
-        WHERE f.FacultyID = ?
-    """, (faculty_id,)).fetchone()
-    conn.close()
-    return faculty
+    try:
+        faculty = conn.execute("""
+            SELECT 
+                f.*,
+                a.Email,
+                a.Role
+            FROM FACULTY f
+            JOIN AUTHENTICATION a ON f.FacultyID = a.UserID
+            WHERE f.FacultyID = ?
+        """, (faculty_id,)).fetchone()
+        return faculty
+    except Exception as e:
+        print(f"Error getting faculty details: {str(e)}")  # Debug log
+        return None
+    finally:
+        conn.close()
 
 def add_student(firstname, lastname, email, password):
     """Add a new student with authentication."""
@@ -81,30 +86,35 @@ def add_student(firstname, lastname, email, password):
 
 def add_faculty(firstname, lastname, email, password):
     """Add a new faculty member with authentication."""
+    print(f"Starting faculty registration process for {email}")  # Debug log
     conn = get_db_connection()
     try:
         # First create authentication entry
+        print("Creating authentication entry")  # Debug log
         conn.execute(
             "INSERT INTO AUTHENTICATION (Email, Password, Role) VALUES (?, ?, ?)",
             (email, password, 'Faculty')
         )
         user_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        print(f"Created authentication entry with ID: {user_id}")  # Debug log
         
         # Then create faculty entry
+        print("Creating faculty entry")  # Debug log
         conn.execute(
             "INSERT INTO FACULTY (FacultyID, FirstName, LastName) VALUES (?, ?, ?)",
             (user_id, firstname, lastname)
         )
         conn.commit()
+        print("Faculty registration completed successfully")  # Debug log
         return True, "Faculty added successfully"
     except sqlite3.IntegrityError as e:
-        print(f"Database integrity error: {str(e)}")  # Debug logging
+        print(f"Database integrity error: {str(e)}")  # Debug log
         conn.rollback()
         if "UNIQUE constraint failed: AUTHENTICATION.Email" in str(e):
             return False, "Error: Email already exists"
         return False, f"Database error: {str(e)}"
     except Exception as e:
-        print(f"Unexpected error: {str(e)}")  # Debug logging
+        print(f"Unexpected error during faculty registration: {str(e)}")  # Debug log
         conn.rollback()
         return False, f"Error: {str(e)}"
     finally:

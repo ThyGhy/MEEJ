@@ -73,17 +73,27 @@ def signup():
             return redirect(url_for('student_home'))
 
         elif faculty_match:
-            success, message = database.add_faculty(firstname, lastname, email, password)
-            if not success:
-                return render_template('signup.html', error=message)
-                
-            # Get the new user for session data
-            user = database.get_user_by_email(email)
-            session['user_id'] = user['UserID']
-            session['email'] = email
-            session['name'] = f"{firstname} {lastname}"
-            session['role'] = 'Faculty'
-            return redirect(url_for('faculty_home'))
+            print(f"Attempting faculty registration for {email}")  # Debug log
+            try:
+                success, message = database.add_faculty(firstname, lastname, email, password)
+                print(f"Faculty registration result: success={success}, message={message}")  # Debug log
+                if not success:
+                    return render_template('signup.html', error=message)
+                    
+                # Get the new user for session data
+                user = database.get_user_by_email(email)
+                if not user:
+                    print("Failed to retrieve newly created faculty user")  # Debug log
+                    return render_template('signup.html', error="Failed to create faculty account")
+                    
+                session['user_id'] = user['UserID']
+                session['email'] = email
+                session['name'] = f"{firstname} {lastname}"
+                session['role'] = 'Faculty'
+                return redirect(url_for('faculty_home'))
+            except Exception as e:
+                print(f"Exception during faculty registration: {str(e)}")  # Debug log
+                return render_template('signup.html', error=f"Registration error: {str(e)}")
         else:
             error = "Invalid email format. Students must use a 10-digit NSHE ID followed by @student.csn.edu, and faculty must use a valid csn domain."
             return render_template('signup.html', error=error)
