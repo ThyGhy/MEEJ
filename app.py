@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import database  # This is our custom module
 import re
-import subprocess
 import datetime
 
 app = Flask(__name__)
@@ -25,18 +24,18 @@ def login():
             return render_template('login.html', error="Invalid credentials.")
             
         # Set basic session data
-        session['user_id'] = user['UserID']
-        session['email'] = user['Email']
+        session['user_id'] = user['Auth_ID']  # Fixed: Use Auth_ID from Authentication table
+        session['email'] = user['CSN_Email']  # Fixed: Use CSN_Email from Authentication table
         session['role'] = user['Role']
         
         # Get additional details based on role
         if user['Role'] == 'Student':
-            student = database.get_student_details(user['UserID'])
+            student = database.get_student_details(user['Auth_ID'])
             session['name'] = f"{student['FirstName']} {student['LastName']}"
             print("Student login successful; redirecting to student home.")
             return redirect(url_for('student_home'))
         else:
-            faculty = database.get_faculty_details(user['UserID'])
+            faculty = database.get_faculty_details(user['Auth_ID'])
             session['name'] = f"{faculty['FirstName']} {faculty['LastName']}"
             print("Faculty login successful; redirecting to faculty home.")
             return redirect(url_for('faculty_home'))
@@ -66,8 +65,8 @@ def signup():
                 
             # Get the new user for session data
             user = database.get_user_by_email(email)
-            session['user_id'] = user['UserID']
-            session['email'] = email
+            session['user_id'] = user['Auth_ID']  # Fixed: Use Auth_ID
+            session['email'] = user['CSN_Email']  # Fixed: Use CSN_Email
             session['name'] = f"{firstname} {lastname}"
             session['role'] = 'Student'
             return redirect(url_for('student_home'))
@@ -86,8 +85,8 @@ def signup():
                     print("Failed to retrieve newly created faculty user")  # Debug log
                     return render_template('signup.html', error="Failed to create faculty account")
                     
-                session['user_id'] = user['UserID']
-                session['email'] = email
+                session['user_id'] = user['Auth_ID']  # Fixed: Use Auth_ID
+                session['email'] = user['CSN_Email']  # Fixed: Use CSN_Email
                 session['name'] = f"{firstname} {lastname}"
                 session['role'] = 'Faculty'
                 return redirect(url_for('faculty_home'))
@@ -177,18 +176,6 @@ def reset_password(token):
     
     return render_template('reset_password.html', token=token)
 
-@app.route('/register_exam', methods=['GET', 'POST'])
-def register_exam():
-    if 'user_id' not in session or session.get('role') != 'Student':
-        return redirect(url_for('login'))
-    return render_template('register_exam.html')
-
-@app.route('/registered_exams')
-def registered_exams():
-    if 'user_id' not in session or session.get('role') != 'Student':
-        return redirect(url_for('login'))
-    return render_template('registered_exams.html', registrations=[])
-
 @app.route('/student_home')
 def student_home():
     if 'user_id' not in session or session.get('role') != 'Student':
@@ -209,6 +196,18 @@ def index():
 def logout():
     session.clear()
     return redirect(url_for('login', success="You have been logged out successfully."))
+
+@app.route('/register_exam', methods=['GET', 'POST'])
+def register_exam():
+    if 'user_id' not in session or session.get('role') != 'Student':
+        return redirect(url_for('login'))
+    return render_template('register_exam.html')
+
+@app.route('/registered_exams')
+def registered_exams():
+    if 'user_id' not in session or session.get('role') != 'Student':
+        return redirect(url_for('login'))
+    return render_template('registered_exams.html', registrations=[])
 
 @app.route('/create_exam', methods=['GET', 'POST'])
 def create_exam():
