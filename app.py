@@ -24,21 +24,27 @@ def login():
             return render_template('login.html', error="Invalid credentials.")
             
         # Set basic session data
-        session['user_id'] = user['Auth_ID']  # Fixed: Use Auth_ID from Authentication table
-        session['email'] = user['CSN_Email']  # Fixed: Use CSN_Email from Authentication table
+        session['user_id'] = user['Auth_ID']  # Using Auth_ID from Authentication table
+        session['email'] = user['CSN_Email']
         session['role'] = user['Role']
         
         # Get additional details based on role
         if user['Role'] == 'Student':
             student = database.get_student_details(user['Auth_ID'])
-            session['name'] = f"{student['FirstName']} {student['LastName']}"
-            print("Student login successful; redirecting to student home.")
-            return redirect(url_for('student_home'))
+            if student:
+                session['name'] = f"{student['FirstName']} {student['LastName']}"
+                print("Student login successful; redirecting to student home.")
+                return redirect(url_for('student_home'))
         else:
             faculty = database.get_faculty_details(user['Auth_ID'])
-            session['name'] = f"{faculty['FirstName']} {faculty['LastName']}"
-            print("Faculty login successful; redirecting to faculty home.")
-            return redirect(url_for('faculty_home'))
+            if faculty:
+                session['name'] = f"{faculty['FirstName']} {faculty['LastName']}"
+                print("Faculty login successful; redirecting to faculty home.")
+                return redirect(url_for('faculty_home'))
+        
+        # If we get here, something went wrong with getting user details
+        session.clear()
+        return render_template('login.html', error="Error retrieving user details.")
             
     return render_template('login.html', success=request.args.get('success'))
 

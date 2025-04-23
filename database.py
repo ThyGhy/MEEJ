@@ -18,7 +18,7 @@ def get_user_by_email(email):
     conn.close()
     return user
 
-def get_student_details(student_id):
+def get_student_details(auth_id):
     """Get student details including authentication info."""
     conn = get_db_connection()
     student = conn.execute("""
@@ -28,8 +28,8 @@ def get_student_details(student_id):
             a.Role
         FROM STUDENTS s
         JOIN AUTHENTICATION a ON s.Auth_ID = a.Auth_ID
-        WHERE s.StudentID = ?
-    """, (student_id,)).fetchone()
+        WHERE a.Auth_ID = ?
+    """, (auth_id,)).fetchone()
     conn.close()
     return student
 
@@ -80,6 +80,8 @@ def add_student(firstname, lastname, email, nsheid):
             return False, "Error: Email already exists"
         elif "UNIQUE constraint failed: STUDENTS.NSHEID" in str(e):
             return False, "Error: NSHE ID already exists"
+        elif "UNIQUE constraint failed: STUDENTS.Email" in str(e):
+            return False, "Error: Email already exists"
         return False, f"Database error: {str(e)}"
     except Exception as e:
         print(f"Unexpected error: {str(e)}")  # Debug logging
