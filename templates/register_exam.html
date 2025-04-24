@@ -10,70 +10,182 @@
 
     	<!-- favicon code below-->
     	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
+        <style>
+            .search-box {
+                background: #f5f5f5;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 30px;
+                max-width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .results-box {
+                background: #f5f5f5;
+                padding: 20px;
+                border-radius: 8px;
+                margin-top: 30px;
+                max-width: 1200px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            
+            .results-box table {
+                width: 100%;
+                margin-top: 15px;
+            }
+            
+            .results-box h2 {
+                margin-top: 0;
+                color: #333;
+                text-align: center;
+            }
+            
+            .no-results {
+                text-align: center;
+                color: #666;
+                padding: 20px;
+            }
+
+            .search-group {
+                margin-bottom: 20px;
+                padding: 10px;
+            }
+
+            .search-group label {
+                display: inline-block;
+                min-width: 120px;
+            }
+
+            .days-group {
+                margin: 10px 0;
+            }
+
+            .days-group label {
+                margin-right: 10px;
+                min-width: auto;
+            }
+
+            .date-group {
+                margin: 10px 0;
+            }
+
+            .date-group label {
+                margin-right: 10px;
+            }
+
+            .search-button {
+                text-align: center;
+                margin-top: 20px;
+            }
+        </style>
     </head>
 
 	<body>
     	<div class="header-bar">
         	<div class="user-name">{{ session.name }}
-        	<a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('login') }}">logout</a>
+        	<a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('logout') }}">logout</a>
         	</div>
         	<div class="user-email">{{ session.email }}</div>
    	 	</div>
     	<div class="container-elem content">
-			<input type="checkbox" id="toggler1" checked/>
-			<label for="toggler1">Subject</label>
+            <div class="search-box">
+                <form method="POST" action="{{ url_for('register_exam') }}">
+                    <div class="search-group">
+                        <label for="subject">Subject:</label>
+                        <select name="subject" id="subject">
+                            <option value="" {% if not request.form.get('subject') %}selected{% endif %}>All Subjects</option>
+                            <option value="CS" {% if request.form.get('subject') == 'CS' %}selected{% endif %}>CS</option>
+                            <option value="CIT" {% if request.form.get('subject') == 'CIT' %}selected{% endif %}>CIT</option>
+                            <option value="CSCO" {% if request.form.get('subject') == 'CSCO' %}selected{% endif %}>CSCO</option>
+                            <option value="CSEC" {% if request.form.get('subject') == 'CSEC' %}selected{% endif %}>CSEC</option>
+                            <option value="IS" {% if request.form.get('subject') == 'IS' %}selected{% endif %}>IS</option>
+                            <option value="GIS" {% if request.form.get('subject') == 'GIS' %}selected{% endif %}>GIS</option>
+                        </select>
+                    </div>
 
-			<div class="toggler1">
-    			<label for="subject">Subject</label>
-    			<select name="subject" id="subject">
-    				<option value="CS">CS</option>
-    				<option value="CIT">CIT</option>
-    				<option value="CSCO">CSCO</option>
-    				<option value="CSEC">CSEC</option>
-    				<option value="IS">IS</option>
-    				<option value="GIS">GIS</option>
-    			</select>
-				<br>
+                    <div class="search-group">
+                        <label for="courseNum">Course Number:</label>
+                        <input type="text" name="courseNum" id="courseNum" value="{{ request.form.get('courseNum', '') }}">
+                    </div>
 
-				<label for="courseNum">Course Number</label>
-				<input type="text" name="courseNum" id="courseNum">
-				<br>
+                    <div class="search-group">
+                        <label for="campus">Campus:</label>
+                        <select name="campus" id="campus">
+                            <option value="" {% if not request.form.get('campus') %}selected{% endif %}>All Campuses</option>
+                            <option value="West Charleston" {% if request.form.get('campus') == 'West Charleston' %}selected{% endif %}>West Charleston</option>
+                            <option value="North Las Vegas" {% if request.form.get('campus') == 'North Las Vegas' %}selected{% endif %}>North Las Vegas</option>
+                            <option value="Henderson" {% if request.form.get('campus') == 'Henderson' %}selected{% endif %}>Henderson</option>
+                        </select>
+                    </div>
 
-				<label for="campus">Campus</label>
-				<button name="campus" type="button" value="West Charleston">West Charleston</button>
-				<button name="campus" type="button" value="North Las Vegas">North Las Vegas</button>
-				<button name="campus" type="button" value="Henderson">Henderson</button>
-			</div>
+                    <div class="search-group">
+                        <div class="days-group">
+                            <label>Days:</label>
+                            <label><input type="checkbox" name="days[]" value="Monday" {% if 'Monday' in request.form.getlist('days[]') %}checked{% endif %}> Mon</label>
+                            <label><input type="checkbox" name="days[]" value="Tuesday" {% if 'Tuesday' in request.form.getlist('days[]') %}checked{% endif %}> Tue</label>
+                            <label><input type="checkbox" name="days[]" value="Wednesday" {% if 'Wednesday' in request.form.getlist('days[]') %}checked{% endif %}> Wed</label>
+                            <label><input type="checkbox" name="days[]" value="Thursday" {% if 'Thursday' in request.form.getlist('days[]') %}checked{% endif %}> Thu</label>
+                            <label><input type="checkbox" name="days[]" value="Friday" {% if 'Friday' in request.form.getlist('days[]') %}checked{% endif %}> Fri</label>
+                        </div>
+                        
+                        <div class="date-group">
+                            <label>Date Range:</label>
+                            <label>From: <input type="date" name="minDate" value="{{ request.form.get('minDate', '') }}"></label>
+                            <label>To: <input type="date" name="maxDate" value="{{ request.form.get('maxDate', '') }}"></label>
+                        </div>
+                    </div>
 
-			<br>
-    		<input type="checkbox" id="toggler2" checked/>
-			<label for="toggler2">Date Search</label>
+                    <div class="search-button">
+                        <button type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
 
-			<div class="toggler2">
-    			<label for="daysWeek">Days of Week</label>
-    			<br>
-    			<label for="Monday">Mon</label>
-    			<input type="checkbox" name="Monday" id="Monday">
-    			<label for="Tuesday">Tue</label>
-    			<input type="checkbox" name="Tuesday" id="Tuesday">
-    			<label for="Wednesday">Wed</label>
-    			<input type="checkbox" name="Wednesday" id="Wednesday">
-    			<label for="Thursday">Thu</label>
-    			<input type="checkbox" name="Thursday" id="Thursday">
-    			<label for="Friday">Fri</label>
-    			<input type="checkbox" name="Friday" id="Friday">
-
-				<br><br>
-				<p style="margin-left:50px;">Date Search</p>
-				<label for="minDate">From:</label>
-				<input type="date" value="2025-14-4" />
-				<label for="maxDate">To:</label>
-				<input type="date" value="2025-14-4" />
-			</div>
-
-			<br>
-			<button type="submit" style="margin:20px;">Search</button>
-    		<br>
+            {% if exams is not none %}
+            <div class="results-box">
+                <h2>Available Exams</h2>
+                {% if exams %}
+                <table>
+                    <tr>
+                        <th>Course</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Campus</th>
+                        <th>Room</th>
+                        <th>Proctor</th>
+                        <th>Capacity</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for exam in exams %}
+                    <tr>
+                        <td>{{ exam.Class }}</td>
+                        <td>{{ exam.ExamDate }}</td>
+                        <td>{{ exam.ExamTime }}</td>
+                        <td>{{ exam.CampusName }}</td>
+                        <td>{{ exam.Building }} {{ exam.RoomNumber }}</td>
+                        <td>{{ exam.ProctorName }}</td>
+                        <td>{{ exam.CurrentEnrollment }}/{{ exam.ExamCapacity }}</td>
+                        <td>
+                            {% if exam.CurrentEnrollment < exam.ExamCapacity %}
+                            <form method="POST" action="{{ url_for('register_for_exam', exam_id=exam.Exam_ID) }}" style="display:inline;">
+                                <button type="submit" class="btn">Register</button>
+                            </form>
+                            {% else %}
+                            <span class="full">Full</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                <div class="no-results">
+                    <p>No exams found matching your search criteria.</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
     	</div>
 	</body>
 </html>

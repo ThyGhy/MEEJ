@@ -198,3 +198,223 @@ def update_password(email, new_password):
     finally:
         conn.close()
 
+def get_registered_exam_count(student_id):
+    """Get the number of exams a student is registered for."""
+    conn = get_db_connection()
+    try:
+        count = conn.execute("""
+            SELECT COUNT(*) as count
+            FROM EXAM_REGISTRATIONS
+            WHERE StudentID = ?
+        """, (student_id,)).fetchone()
+        return count['count']
+    finally:
+        conn.close()
+
+def search_exams(subject=None, course_num=None, campus=None, days=None, min_date=None, max_date=None, student_id=None):
+    """Search for available exams based on criteria."""
+    conn = get_db_connection()
+    try:
+        query = """
+            SELECT DISTINCT
+                e.*,
+                l.CampusName,
+                l.Building,
+                l.RoomNumber,
+                f.FirstName || ' ' || f.LastName as ProctorName,
+                strftime('%w', date(e.ExamDate)) as DayOfWeek,
+                CASE WHEN er.StudentID IS NOT NULL THEN 1 ELSE 0 END as IsRegistered
+            FROM EXAMS e
+            JOIN LOCATION l ON e.LocationID = l.LocationID
+            JOIN FACULTY f ON e.ProctorID = f.FacultyID
+            LEFT JOIN EXAM_REGISTRATIONS er ON e.Exam_ID = er.Exam_ID AND er.StudentID = ?
+            WHERE 1=1
+            AND (er.StudentID IS NULL)  -- Only show exams the student is not registered for
+            AND (e.CurrentEnrollment < e.ExamCapacity)  -- Only show exams that aren't full
+        """
+        
+        params = [student_id] if student_id else [None]
+            
+        if subject and subject.strip():
+            query += " AND e.Class LIKE ?"
+            params.append(subject + '%')
+            
+        if course_num:
+            query += " AND e.Class LIKE ?"
+            params.append('%' + course_num + '%')
+            
+        if campus:
+            query += " AND l.CampusName = ?"
+            params.append(campus)
+            
+        if min_date:
+            query += " AND date(e.ExamDate) >= date(?)"
+            params.append(min_date)
+            
+        if max_date:
+            query += " AND date(e.ExamDate) <= date(?)"
+            params.append(max_date)
+            
+        if days:
+            day_conditions = []
+            for day in days:
+                if day == 'Monday':
+                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '1'")
+                elif day == 'Tuesday':
+                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '2'")
+                elif day == 'Wednesday':
+                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '3'")
+                elif day == 'Thursday':
+                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '4'")
+                elif day == 'Friday':
+                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '5'")
+            if day_conditions:
+                query += " AND (" + " OR ".join(day_conditions) + ")"
+            
+        query += " ORDER BY e.ExamDate, e.ExamTime"
+        
+        exams = conn.execute(query, params).fetchall()
+        return exams
+    finally:
+        conn.close()
+
+def register_for_exam(student_id, exam_id):
+    """Register a student for an exam."""
+    conn = get_db_connection()
+    try:
+        # Check if student is already registered for this exam
+        existing = conn.execute(
+            "SELECT 1 FROM EXAM_REGISTRATIONS WHERE StudentID = ? AND Exam_ID = ?",
+            (student_id, exam_id)
+        ).fetchone()
+        
+        if existing:
+            return False, "You are already registered for this exam"
+            
+        # Check if exam is full
+        exam = conn.execute(
+            "SELECT ExamCapacity, CurrentEnrollment FROM EXAMS WHERE Exam_ID = ?",
+            (exam_id,)
+        ).fetchone()
+        
+        if not exam:
+            return False, "Exam not found"
+            
+        if exam['CurrentEnrollment'] >= exam['ExamCapacity']:
+            return False, "This exam is full"
+            
+        # Register the student and increment CurrentEnrollment
+        conn.execute(
+            "INSERT INTO EXAM_REGISTRATIONS (StudentID, Exam_ID) VALUES (?, ?)",
+            (student_id, exam_id)
+        )
+        
+        # Update the CurrentEnrollment count
+        conn.execute(
+            "UPDATE EXAMS SET CurrentEnrollment = CurrentEnrollment + 1 WHERE Exam_ID = ?",
+            (exam_id,)
+        )
+        
+        conn.commit()
+        return True, "Successfully registered for exam"
+        
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        return False, str(e)
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error: {str(e)}"
+    finally:
+        conn.close()
+
+def get_student_exams(student_id):
+    """Get all exams a student is registered for."""
+    conn = get_db_connection()
+    try:
+        exams = conn.execute("""
+            SELECT 
+                e.*,
+                l.CampusName,
+                l.Building,
+                l.RoomNumber,
+                f.FirstName || ' ' || f.LastName as ProctorName,
+                er.RegistrationDate
+            FROM EXAM_REGISTRATIONS er
+            JOIN EXAMS e ON er.Exam_ID = e.Exam_ID
+            JOIN LOCATION l ON e.LocationID = l.LocationID
+            JOIN FACULTY f ON e.ProctorID = f.FacultyID
+            WHERE er.StudentID = ?
+            ORDER BY e.ExamDate, e.ExamTime
+        """, (student_id,)).fetchall()
+        return exams
+    finally:
+        conn.close()
+
+def cancel_exam_registration(student_id, exam_id):
+    """Cancel a student's exam registration."""
+    conn = get_db_connection()
+    try:
+        # First check if the registration exists
+        registration = conn.execute(
+            "SELECT 1 FROM EXAM_REGISTRATIONS WHERE StudentID = ? AND Exam_ID = ?",
+            (student_id, exam_id)
+        ).fetchone()
+        
+        if not registration:
+            return False, "Registration not found"
+            
+        # Get current enrollment count
+        current = conn.execute(
+            "SELECT CurrentEnrollment FROM EXAMS WHERE Exam_ID = ?",
+            (exam_id,)
+        ).fetchone()
+        
+        if current and current['CurrentEnrollment'] > 0:
+            # Delete the registration
+            conn.execute(
+                "DELETE FROM EXAM_REGISTRATIONS WHERE StudentID = ? AND Exam_ID = ?",
+                (student_id, exam_id)
+            )
+            
+            # Decrement the CurrentEnrollment count, ensuring it doesn't go below 0
+            conn.execute(
+                "UPDATE EXAMS SET CurrentEnrollment = MAX(0, CurrentEnrollment - 1) WHERE Exam_ID = ?",
+                (exam_id,)
+            )
+            
+            conn.commit()
+            return True, "Registration cancelled successfully"
+        else:
+            conn.rollback()
+            return False, "Error: Invalid enrollment count"
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error: {str(e)}"
+    finally:
+        conn.close()
+
+def get_all_exams_debug():
+    """Debug function to list all exams in database."""
+    conn = get_db_connection()
+    try:
+        exams = conn.execute("""
+            SELECT 
+                e.*,
+                l.CampusName,
+                l.Building,
+                l.RoomNumber,
+                f.FirstName || ' ' || f.LastName as ProctorName
+            FROM EXAMS e
+            JOIN LOCATION l ON e.LocationID = l.LocationID
+            JOIN FACULTY f ON e.ProctorID = f.FacultyID
+            ORDER BY e.ExamDate, e.ExamTime
+        """).fetchall()
+        
+        print("\nDEBUG - All exams in database:")
+        print(f"Total exams found: {len(exams)}")
+        for exam in exams:
+            print(f"Exam: {exam['Class']}, Date: {exam['ExamDate']}, Time: {exam['ExamTime']}, Campus: {exam['CampusName']}")
+        return exams
+    finally:
+        conn.close()
+

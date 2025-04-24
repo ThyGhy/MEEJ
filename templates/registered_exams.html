@@ -19,35 +19,39 @@
 
     	<div class="content">
             <h1>Registered Exams</h1>
+            {% if registrations %}
        		<table>
 				<tr>
 			    	<th>Course</th>
-			       	<th>Days & Times</th>
-			       	<th>Location</th>
+			       	<th>Date</th>
+			       	<th>Time</th>
+			       	<th>Campus</th>
 			       	<th>Room</th>
 			       	<th>Proctor</th>
-			       	<th>Exam Method</th>
 			       	<th>Action</th>
 			    </tr>
+                {% for exam in registrations %}
 			    <tr>
-			       	<td>GEOL 101</td>
-			       	<td>MoWe 8:00AM - 12:00PM</td>
-			       	<td>West Charleston</td>
-			       	<td>West Charleston Bldg H 202</td>
-			       	<td>Maurion Herring</td>
-			       	<td>In-Person</td>
-			       	<td><button class="btn">✕</button></td>
+			       	<td>{{ exam.Class }}</td>
+			       	<td>{{ exam.ExamDate }}</td>
+			       	<td>{{ exam.ExamTime }}</td>
+			       	<td>{{ exam.CampusName }}</td>
+			       	<td>{{ exam.Building }} {{ exam.RoomNumber }}</td>
+			       	<td>{{ exam.ProctorName }}</td>
+			       	<td>
+                        <form method="POST" action="{{ url_for('cancel_registration', exam_id=exam.Exam_ID) }}" style="display:inline;">
+                            <button type="submit" class="btn">✕</button>
+                        </form>
+                    </td>
 			    </tr>
-			    <tr>
-			       	<td>MATH 127</td>
-			       	<td>TuTh 1:00PM - 5:00PM</td>
-			       	<td>North Las Vegas</td>
-			       	<td>North Las Vegas Bldg H 305</td>
-			       	<td>Elaine Hernie</td>
-			       	<td>In-Person</td>
-			       	<td><button class="btn">✕</button></td>
-			    </tr>
+                {% endfor %}
        	 	</table>
+            {% else %}
+            <p>You have not registered for any exams yet.</p>
+            {% endif %}
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="{{ url_for('register_exam') }}" class="button">Register for Exams</a>
+            </div>
     	</div>
 	</body>
 </html>

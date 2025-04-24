@@ -207,19 +207,108 @@ def logout():
 def register_exam():
     if 'user_id' not in session or session.get('role') != 'Student':
         return redirect(url_for('login'))
-    return render_template('register_exam.html')
+        
+    # Get student ID from session
+    student = database.get_student_details(session['user_id'])
+    if not student:
+        return redirect(url_for('login'))
+        
+    # Check if student has reached the exam limit
+    exam_count = database.get_registered_exam_count(student['StudentID'])
+    if exam_count >= 3:
+        return render_template('register_exam.html', 
+                            exams=None, 
+                            error="Maximum limit of 3 exams reached. Please unregister from an exam before searching for new ones.",
+                            exam_count=exam_count)
+        
+    if request.method == 'POST':
+        # Get search parameters
+        subject = request.form.get('subject')
+        course_num = request.form.get('courseNum')
+        campus = request.form.get('campus')
+        days = request.form.getlist('days[]')
+        min_date = request.form.get('minDate')
+        max_date = request.form.get('maxDate')
+        
+        # Search for exams, excluding already registered ones
+        exams = database.search_exams(
+            subject=subject,
+            course_num=course_num,
+            campus=campus,
+            days=days if days else None,
+            min_date=min_date if min_date else None,
+            max_date=max_date if max_date else None,
+            student_id=student['StudentID']
+        )
+        
+        return render_template('register_exam.html', 
+                            exams=exams, 
+                            exam_count=exam_count)
+        
+    return render_template('register_exam.html', 
+                         exams=None, 
+                         exam_count=exam_count)
+
+@app.route('/register_for_exam/<int:exam_id>', methods=['POST'])
+def register_for_exam(exam_id):
+    if 'user_id' not in session or session.get('role') != 'Student':
+        return redirect(url_for('login'))
+        
+    # Get student ID from session
+    student = database.get_student_details(session['user_id'])
+    if not student:
+        return redirect(url_for('login'))
+        
+    # Check if student has reached the exam limit
+    exam_count = database.get_registered_exam_count(student['StudentID'])
+    if exam_count >= 3:
+        return redirect(url_for('register_exam'))
+        
+    success, message = database.register_for_exam(student['StudentID'], exam_id)
+    if success:
+        return redirect(url_for('registered_exams'))
+    else:
+        return redirect(url_for('register_exam'))
 
 @app.route('/registered_exams')
 def registered_exams():
     if 'user_id' not in session or session.get('role') != 'Student':
         return redirect(url_for('login'))
-    return render_template('registered_exams.html', registrations=[])
+        
+    # Get student ID from session
+    student = database.get_student_details(session['user_id'])
+    if not student:
+        return redirect(url_for('login'))
+        
+    registrations = database.get_student_exams(student['StudentID'])
+    exam_count = database.get_registered_exam_count(student['StudentID'])
+    return render_template('registered_exams.html', 
+                         registrations=registrations,
+                         exam_count=exam_count)
+
+@app.route('/cancel_registration/<int:exam_id>', methods=['POST'])
+def cancel_registration(exam_id):
+    if 'user_id' not in session or session.get('role') != 'Student':
+        return redirect(url_for('login'))
+        
+    # Get student ID from session
+    student = database.get_student_details(session['user_id'])
+    if not student:
+        return redirect(url_for('login'))
+        
+    success, message = database.cancel_exam_registration(student['StudentID'], exam_id)
+    return redirect(url_for('registered_exams'))
 
 @app.route('/create_exam', methods=['GET', 'POST'])
 def create_exam():
     if 'user_id' not in session or session.get('role') != 'Faculty':
         return redirect(url_for('login'))
     return render_template('create_exam.html')
+
+@app.route('/debug/exams')
+def debug_exams():
+    exams = database.get_all_exams_debug()
+    return f"Check console for debug output. Found {len(exams)} exams."
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
