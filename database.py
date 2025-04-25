@@ -236,12 +236,13 @@ def search_exams(subject=None, course_num=None, campus=None, days=None, min_date
         params = [student_id] if student_id else [None]
             
         if subject and subject.strip():
-            query += " AND e.Class LIKE ?"
-            params.append(subject + '%')
+            # Use exact match for subject by looking at everything before the space
+            query += " AND e.Class LIKE ? || ' %'"  # This will match "CS 135" but not "CSCO 135"
+            params.append(subject)
             
         if course_num:
-            query += " AND e.Class LIKE ?"
-            params.append('%' + course_num + '%')
+            query += " AND e.Class LIKE '% ' || ? || '%'"  # This will match the course number part
+            params.append(course_num)
             
         if campus:
             query += " AND l.CampusName = ?"
@@ -415,6 +416,206 @@ def get_all_exams_debug():
         for exam in exams:
             print(f"Exam: {exam['Class']}, Date: {exam['ExamDate']}, Time: {exam['ExamTime']}, Campus: {exam['CampusName']}")
         return exams
+    finally:
+        conn.close()
+
+def debug_fill_exam(exam_id, num_registrations):
+    """Debug function to simulate multiple registrations for an exam.
+    Returns the current enrollment count and capacity."""
+    conn = get_db_connection()
+    try:
+        # First get the exam's current state
+        exam = conn.execute("""
+            SELECT Exam_ID, ExamCapacity, CurrentEnrollment, Class 
+            FROM EXAMS WHERE Exam_ID = ?
+        """, (exam_id,)).fetchone()
+        
+        if not exam:
+            return False, f"Exam ID {exam_id} not found"
+        
+        # Convert and validate num_registrations
+        try:
+            num_registrations = int(num_registrations)
+            if num_registrations <= 0:
+                return False, f"Number of registrations must be positive"
+        except ValueError:
+            return False, f"Invalid number of registrations requested"
+            
+        # Calculate how many spots we can actually fill
+        available_spots = exam['ExamCapacity'] - exam['CurrentEnrollment']
+        spots_to_fill = min(available_spots, num_registrations)
+        
+        if spots_to_fill <= 0:
+            return False, f"Exam {exam['Class']} (ID: {exam_id}) is already full or cannot add more. Capacity: {exam['ExamCapacity']}, Current: {exam['CurrentEnrollment']}"
+        
+        # Get the starting enrollment count
+        starting_count = exam['CurrentEnrollment']
+        target_count = starting_count + num_registrations
+        
+        # Add registrations one by one
+        spots_filled = 0
+        current_count = starting_count
+        
+        while spots_filled < num_registrations and current_count < exam['ExamCapacity']:
+            try:
+                # Generate unique dummy student ID
+                dummy_student_id = 900000000 + current_count
+                
+                # Add the registration
+                conn.execute(
+                    "INSERT INTO EXAM_REGISTRATIONS (StudentID, Exam_ID) VALUES (?, ?)",
+                    (dummy_student_id, exam_id)
+                )
+                
+                spots_filled += 1
+                current_count += 1
+                
+                # Update enrollment count for this registration
+                conn.execute(
+                    "UPDATE EXAMS SET CurrentEnrollment = ? WHERE Exam_ID = ?",
+                    (current_count, exam_id)
+                )
+                conn.commit()
+                
+            except sqlite3.IntegrityError as e:
+                print(f"Skipping registration due to: {str(e)}")
+                conn.rollback()
+                continue
+                
+        # Get final exam state
+        final_state = conn.execute(
+            "SELECT ExamCapacity, CurrentEnrollment FROM EXAMS WHERE Exam_ID = ?",
+            (exam_id,)
+        ).fetchone()
+        
+        return True, f"Added exactly {spots_filled} registrations to {exam['Class']} (ID: {exam_id}). Previous: {starting_count}, Now: {final_state['CurrentEnrollment']}/{final_state['ExamCapacity']}"
+        
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error: {str(e)}"
+    finally:
+        conn.close()
+
+def debug_clear_exam_registrations(exam_id):
+    """Debug function to clear all dummy registrations from an exam."""
+    conn = get_db_connection()
+    try:
+        # Remove all registrations with dummy student IDs
+        conn.execute("""
+            DELETE FROM EXAM_REGISTRATIONS 
+            WHERE Exam_ID = ? AND StudentID >= 900000000
+        """, (exam_id,))
+        
+        # Reset the enrollment count to actual registrations
+        actual_count = conn.execute("""
+            SELECT COUNT(*) as count 
+            FROM EXAM_REGISTRATIONS 
+            WHERE Exam_ID = ?
+        """, (exam_id,)).fetchone()['count']
+        
+        conn.execute(
+            "UPDATE EXAMS SET CurrentEnrollment = ? WHERE Exam_ID = ?",
+            (actual_count, exam_id)
+        )
+        
+        conn.commit()
+        return True, f"Cleared dummy registrations. Current enrollment: {actual_count}"
+        
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error: {str(e)}"
+    finally:
+        conn.close()
+
+def debug_subtract_registrations(exam_id, num_to_remove):
+    """Debug function to remove a specific number of dummy registrations from an exam."""
+    conn = get_db_connection()
+    try:
+        # First get the exam's current state
+        exam = conn.execute("""
+            SELECT Exam_ID, ExamCapacity, CurrentEnrollment, Class 
+            FROM EXAMS WHERE Exam_ID = ?
+        """, (exam_id,)).fetchone()
+        
+        if not exam:
+            return False, f"Exam ID {exam_id} not found"
+            
+        # Convert and validate num_to_remove
+        try:
+            num_to_remove = int(num_to_remove)
+            if num_to_remove <= 0:
+                return False, f"Number of registrations to remove must be positive"
+        except ValueError:
+            return False, f"Invalid number of registrations to remove"
+            
+        # Get starting state
+        starting_count = exam['CurrentEnrollment']
+        
+        # Get count of dummy registrations
+        dummy_count = conn.execute("""
+            SELECT COUNT(*) as count 
+            FROM EXAM_REGISTRATIONS 
+            WHERE Exam_ID = ? AND StudentID >= 900000000
+        """, (exam_id,)).fetchone()['count']
+        
+        if dummy_count == 0:
+            return False, f"No dummy registrations to remove from {exam['Class']} (ID: {exam_id})"
+            
+        # Calculate how many we can actually remove
+        removable = min(dummy_count, num_to_remove)
+        
+        # Get the dummy registrations to remove
+        dummy_students = conn.execute("""
+            SELECT StudentID 
+            FROM EXAM_REGISTRATIONS 
+            WHERE Exam_ID = ? AND StudentID >= 900000000 
+            ORDER BY StudentID DESC
+            LIMIT ?
+        """, (exam_id, removable)).fetchall()
+        
+        # Remove registrations one by one
+        removed = 0
+        current_count = starting_count
+        
+        for student in dummy_students:
+            if removed >= num_to_remove:
+                break
+                
+            try:
+                # Remove the registration
+                conn.execute("""
+                    DELETE FROM EXAM_REGISTRATIONS 
+                    WHERE Exam_ID = ? AND StudentID = ?
+                """, (exam_id, student['StudentID']))
+                
+                removed += 1
+                current_count -= 1
+                
+                # Update enrollment count
+                conn.execute("""
+                    UPDATE EXAMS 
+                    SET CurrentEnrollment = ? 
+                    WHERE Exam_ID = ?
+                """, (current_count, exam_id))
+                
+                conn.commit()
+                
+            except Exception as e:
+                print(f"Error removing registration: {str(e)}")
+                conn.rollback()
+                continue
+        
+        # Get final state
+        final_state = conn.execute("""
+            SELECT ExamCapacity, CurrentEnrollment 
+            FROM EXAMS WHERE Exam_ID = ?
+        """, (exam_id,)).fetchone()
+        
+        return True, f"Removed exactly {removed} dummy registrations from {exam['Class']} (ID: {exam_id}). Previous: {starting_count}, Now: {final_state['CurrentEnrollment']}/{final_state['ExamCapacity']}"
+        
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error: {str(e)}"
     finally:
         conn.close()
 

@@ -310,5 +310,19 @@ def debug_exams():
     exams = database.get_all_exams_debug()
     return f"Check console for debug output. Found {len(exams)} exams."
 
+@app.route('/debug/exam_capacity/<int:exam_id>', methods=['GET'])
+def debug_exam_capacity(exam_id):
+    action = request.args.get('action', 'fill')
+    if action == 'fill':
+        num_registrations = int(request.args.get('num', 20))
+        success, message = database.debug_fill_exam(exam_id, num_registrations)
+    elif action == 'subtract':
+        num_to_remove = int(request.args.get('num', 1))
+        success, message = database.debug_subtract_registrations(exam_id, num_to_remove)
+    else:  # clear
+        success, message = database.debug_clear_exam_registrations(exam_id)
+    
+    return f"Debug result: {message}"
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

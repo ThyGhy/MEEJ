@@ -13,12 +13,10 @@
         <style>
             .search-box {
                 background: #f5f5f5;
-                padding: 20px;
+                padding: 30px;
                 border-radius: 8px;
-                margin-bottom: 30px;
-                max-width: 800px;
-                margin-left: auto;
-                margin-right: auto;
+                margin: 20px auto;
+                max-width: 500px;
             }
             
             .results-box {
@@ -31,53 +29,101 @@
                 margin-right: auto;
             }
             
-            .results-box table {
-                width: 100%;
-                margin-top: 15px;
-            }
-            
-            .results-box h2 {
-                margin-top: 0;
-                color: #333;
-                text-align: center;
-            }
-            
-            .no-results {
-                text-align: center;
-                color: #666;
-                padding: 20px;
-            }
-
-            .search-group {
+            .form-group {
+                display: flex;
+                align-items: center;
                 margin-bottom: 20px;
-                padding: 10px;
             }
 
-            .search-group label {
-                display: inline-block;
-                min-width: 120px;
+            .form-group label {
+                width: 120px;
+                text-align: right;
+                margin-right: 15px;
             }
 
-            .days-group {
-                margin: 10px 0;
+            .form-group select,
+            .form-group input[type="text"] {
+                width: 200px;
+                padding: 5px;
+                border-radius: 4px;
+                border: 1px solid #ddd;
             }
 
-            .days-group label {
-                margin-right: 10px;
-                min-width: auto;
+            .days-section {
+                margin: 20px 0;
+                text-align: center;
             }
 
-            .date-group {
-                margin: 10px 0;
+            .days-label {
+                margin-bottom: 10px;
+                padding-right: 15px;
+                font-weight: normal;
             }
 
-            .date-group label {
-                margin-right: 10px;
+            .days-options {
+                display: flex;
+                justify-content: center;
+                gap: 40px;
+                padding-right: 25px;
+            }
+
+            .day-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .date-section {
+                margin: 20px 0;
+                text-align: center;
+            }
+
+            .date-label {
+                margin-bottom: 10px;
+                font-weight: normal;
+            }
+
+            .date-inputs {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                padding-right: 25px;
+            }
+
+            .date-input-group {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .date-inputs input[type="date"] {
+                padding: 5px;
+                border-radius: 4px;
+                border: 1px solid #ddd;
             }
 
             .search-button {
                 text-align: center;
-                margin-top: 20px;
+                margin-top: 30px;
+            }
+
+            .search-button button {
+                padding: 8px 20px;
+                border-radius: 4px;
+                border: none;
+                background-color: #004b87;
+                color: white;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            .search-button button:hover {
+                background-color: #003666;
+            }
+
+            h2 {
+                text-align: center;
             }
         </style>
     </head>
@@ -90,9 +136,14 @@
         	<div class="user-email">{{ session.email }}</div>
    	 	</div>
     	<div class="container-elem content">
+            {% if error %}
+            <div class="error-msg" style="background-color: #ffebee; color: #c62828; padding: 10px; margin-bottom: 20px; border-radius: 4px; text-align: center;">
+                {{ error }}
+            </div>
+            {% endif %}
             <div class="search-box">
                 <form method="POST" action="{{ url_for('register_exam') }}">
-                    <div class="search-group">
+                    <div class="form-group">
                         <label for="subject">Subject:</label>
                         <select name="subject" id="subject">
                             <option value="" {% if not request.form.get('subject') %}selected{% endif %}>All Subjects</option>
@@ -105,12 +156,12 @@
                         </select>
                     </div>
 
-                    <div class="search-group">
+                    <div class="form-group">
                         <label for="courseNum">Course Number:</label>
                         <input type="text" name="courseNum" id="courseNum" value="{{ request.form.get('courseNum', '') }}">
                     </div>
 
-                    <div class="search-group">
+                    <div class="form-group">
                         <label for="campus">Campus:</label>
                         <select name="campus" id="campus">
                             <option value="" {% if not request.form.get('campus') %}selected{% endif %}>All Campuses</option>
@@ -120,20 +171,43 @@
                         </select>
                     </div>
 
-                    <div class="search-group">
-                        <div class="days-group">
-                            <label>Days:</label>
-                            <label><input type="checkbox" name="days[]" value="Monday" {% if 'Monday' in request.form.getlist('days[]') %}checked{% endif %}> Mon</label>
-                            <label><input type="checkbox" name="days[]" value="Tuesday" {% if 'Tuesday' in request.form.getlist('days[]') %}checked{% endif %}> Tue</label>
-                            <label><input type="checkbox" name="days[]" value="Wednesday" {% if 'Wednesday' in request.form.getlist('days[]') %}checked{% endif %}> Wed</label>
-                            <label><input type="checkbox" name="days[]" value="Thursday" {% if 'Thursday' in request.form.getlist('days[]') %}checked{% endif %}> Thu</label>
-                            <label><input type="checkbox" name="days[]" value="Friday" {% if 'Friday' in request.form.getlist('days[]') %}checked{% endif %}> Fri</label>
+                    <div class="days-section">
+                        <div class="days-label">Days:</div>
+                        <div class="days-options">
+                            <div class="day-item">
+                                <input type="checkbox" name="days[]" value="Monday" {% if 'Monday' in request.form.getlist('days[]') %}checked{% endif %}>
+                                <span>Mon</span>
+                            </div>
+                            <div class="day-item">
+                                <input type="checkbox" name="days[]" value="Tuesday" {% if 'Tuesday' in request.form.getlist('days[]') %}checked{% endif %}>
+                                <span>Tue</span>
+                            </div>
+                            <div class="day-item">
+                                <input type="checkbox" name="days[]" value="Wednesday" {% if 'Wednesday' in request.form.getlist('days[]') %}checked{% endif %}>
+                                <span>Wed</span>
+                            </div>
+                            <div class="day-item">
+                                <input type="checkbox" name="days[]" value="Thursday" {% if 'Thursday' in request.form.getlist('days[]') %}checked{% endif %}>
+                                <span>Thu</span>
+                            </div>
+                            <div class="day-item">
+                                <input type="checkbox" name="days[]" value="Friday" {% if 'Friday' in request.form.getlist('days[]') %}checked{% endif %}>
+                                <span>Fri</span>
+                            </div>
                         </div>
-                        
-                        <div class="date-group">
-                            <label>Date Range:</label>
-                            <label>From: <input type="date" name="minDate" value="{{ request.form.get('minDate', '') }}"></label>
-                            <label>To: <input type="date" name="maxDate" value="{{ request.form.get('maxDate', '') }}"></label>
+                    </div>
+                    
+                    <div class="date-section">
+                        <div class="date-label">Date Range:</div>
+                        <div class="date-inputs">
+                            <div class="date-input-group">
+                                <span>From:</span>
+                                <input type="date" name="minDate" value="{{ request.form.get('minDate', '') }}">
+                            </div>
+                            <div class="date-input-group">
+                                <span>To:</span>
+                                <input type="date" name="maxDate" value="{{ request.form.get('maxDate', '') }}">
+                            </div>
                         </div>
                     </div>
 
