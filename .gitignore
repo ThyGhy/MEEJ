@@ -1,0 +1,11 @@
+# Database 
+*.db 
+*.db-journal 
+ 
+# Python cache 
+__pycache__/ 
+*.py[cod] 
+ 
+# Logs 
+*.log 
+caddy_config/ 
