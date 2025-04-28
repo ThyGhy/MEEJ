@@ -8,9 +8,13 @@
 
     	<link rel="stylesheet" href="{{ url_for('static', filename='CSS/sheet-styles.css') }}">
 
+    	<!-- Add icon library -->
+		<script src="https://kit.fontawesome.com/515a911ad3.js" crossorigin="anonymous"></script>
+
     	<!-- favicon code below-->
     	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-        <style>
+
+        <!-- <style>
             .search-box {
                 background: #f5f5f5;
                 padding: 30px;
@@ -18,7 +22,7 @@
                 margin: 20px auto;
                 max-width: 500px;
             }
-            
+
             .results-box {
                 background: #f5f5f5;
                 padding: 20px;
@@ -28,7 +32,7 @@
                 margin-left: auto;
                 margin-right: auto;
             }
-            
+
             .form-group {
                 display: flex;
                 align-items: center;
@@ -125,17 +129,20 @@
             h2 {
                 text-align: center;
             }
-        </style>
+        </style> -->
     </head>
 
 	<body>
     	<div class="header-bar">
-        	<div class="user-name">{{ session.name }}
-        	<a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('logout') }}">logout</a>
-        	</div>
-        	<div class="user-email">{{ session.email }}</div>
+		   <div class="user-name">{{ session.name }}</div>
+		   <div class="user-email">
+		      <a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('login') }}">logout</a>
+		      {{ session.email }}
+		   </div>
    	 	</div>
+
     	<div class="container-elem content">
+    	<h1>Exams Search</h1>
             {% if error %}
             <div class="error-msg" style="background-color: #ffebee; color: #c62828; padding: 10px; margin-bottom: 20px; border-radius: 4px; text-align: center;">
                 {{ error }}
@@ -196,7 +203,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="date-section">
                         <div class="date-label">Date Range:</div>
                         <div class="date-inputs">
@@ -244,7 +251,9 @@
                         <td>
                             {% if exam.CurrentEnrollment < exam.ExamCapacity %}
                             <form method="POST" action="{{ url_for('register_for_exam', exam_id=exam.Exam_ID) }}" style="display:inline;">
-                                <button type="submit" class="btn">Register</button>
+                                <button type="submit" class="btn" title="register" style="color: #42bd02">
+                                	<i class="fa-solid fa-check"></i>
+                                </button>
                             </form>
                             {% else %}
                             <span class="full">Full</span>

@@ -36,7 +36,6 @@ html {
 .user-name a {
 	color: white;
 	margin-left: 10px;
-	font-size: 14px;
 }
 
 .user-name a:hover {
@@ -47,6 +46,11 @@ html {
 	font-family: arial;
 	font-size: 14px;
 	color: white;
+}
+
+.user-email a {
+	color: white;
+	margin-right: 10px;
 }
 
 .button {
@@ -63,10 +67,15 @@ html {
 	background-color: #1d1e21;
 }
 
-label {
+label, .date-section, .time-section, .days-label {
 	color: black;
-	margin-left: 50px;  /* need to change this lol */
+	margin-left: 7%;
 	line-height: 30px;
+}
+
+.days-options {
+	line-height: 15px;
+	margin-left: 8%;
 }
 
 label[type="checkbox"] {
@@ -76,6 +85,14 @@ label[type="checkbox"] {
 .content {
 	margin-top: 60px;
 	width: 100%;
+}
+
+.content table {
+	max-width: 55%;
+}
+
+.content p {
+	text-align: center;
 }
 
 h1 {
@@ -231,7 +248,7 @@ td {
 
 table .btn {
     margin: 0 auto;
-}
+}.n
 
 .btn i {
 	font-size: 40px;
@@ -246,12 +263,33 @@ table .btn {
 	color: blue;
 }
 
+*/ Register-Exam styles */
+.results-box h2 {
+	margin-left: 20px;
+}
+
+/* Error styles */
+.no-results {
+	padding: 10px;
+}
+
 /* Registered Exams specific styles */
 .registered-exams h1 {
     text-align: center;
     margin: 20px 0;
     font-size: 24px;
     color: black;
+}
+
+.search-button {
+	margin-left: 40px;
+	padding: 10px;
+	padding-bottom: 25px;
+}
+
+.day-item{
+	padding: 2px;
+	margin-left: 12px;
 }
 
 /* Table X button style */
@@ -270,4 +308,3 @@ table .btn {
     display: block;
     text-align: center;
 }
-

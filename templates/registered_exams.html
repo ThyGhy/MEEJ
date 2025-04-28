@@ -11,14 +11,15 @@
 
 	<body>
     	<div class="header-bar">
-        	<div class="user-name">{{ session.name }}
-        	<a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('logout') }}">logout</a>
-        	</div>
-        	<div class="user-email">{{ session.email }}</div>
+			<div class="user-name">{{ session.name }}</div>
+		     <div class="user-email">
+		        <a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('login') }}">logout</a>
+		        {{ session.email }}
+		     </div>
    	 	</div>
 
     	<div class="content">
-            <h1>Registered Exams</h1>
+            <br><h1>Registered Exams</h1>
             {% if registrations %}
        		<table>
 				<tr>
@@ -40,18 +41,17 @@
 			       	<td>{{ exam.ProctorName }}</td>
 			       	<td>
                         <form method="POST" action="{{ url_for('cancel_registration', exam_id=exam.Exam_ID) }}" style="display:inline;">
-                            <button type="submit" class="btn">✕</button>
+                            <button type="submit" class="btn" style="color: red"><i class="fa-solid fa-xmark"></i></button>
                         </form>
                     </td>
 			    </tr>
                 {% endfor %}
        	 	</table>
+
             {% else %}
-            <p>You have not registered for any exams yet.</p>
+            <br><p>You have not registered for any exams yet.</p>
             {% endif %}
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="{{ url_for('register_exam') }}" class="button">Register for Exams</a>
-            </div>
+                <a href="{{ url_for('register_exam') }}"><button type="submit">Register for Exams</button></a>
     	</div>
 	</body>
 </html>
