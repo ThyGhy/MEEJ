@@ -5,7 +5,6 @@
     	<title>Registered Exams (MEEJ)</title>
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     	<link rel="stylesheet" href="{{ url_for('static', filename='CSS/sheet-styles.css') }}">
-    	<script src="https://kit.fontawesome.com/515a911ad3.js" crossorigin="anonymous"></script>
     	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
 	</head>
 
@@ -41,8 +40,8 @@
 			       	<td>{{ exam.ProctorName }}</td>
 			       	<td>
                         <form method="POST" action="{{ url_for('cancel_registration', exam_id=exam.Exam_ID) }}" style="display:inline;">
-                            <button type="submit" class="btn" style="color: red; font-size: 18px;" title="Cancel Registration">
-                                <i class="fa-solid fa-xmark"></i>
+                            <button type="submit" style="background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 14px;">
+                                Unregister
                             </button>
                         </form>
                     </td>
