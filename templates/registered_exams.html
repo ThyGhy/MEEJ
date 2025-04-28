@@ -41,7 +41,9 @@
 			       	<td>{{ exam.ProctorName }}</td>
 			       	<td>
                         <form method="POST" action="{{ url_for('cancel_registration', exam_id=exam.Exam_ID) }}" style="display:inline;">
-                            <button type="submit" class="btn" style="color: red"><i class="fa-solid fa-xmark"></i></button>
+                            <button type="submit" class="btn" style="color: red; font-size: 18px;" title="Cancel Registration">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                         </form>
                     </td>
 			    </tr>
@@ -51,7 +53,9 @@
             {% else %}
             <br><p>You have not registered for any exams yet.</p>
             {% endif %}
-                <a href="{{ url_for('register_exam') }}"><button type="submit">Register for Exams</button></a>
+            <div style="text-align: center; margin: 20px 0;">
+                <a href="{{ url_for('register_exam') }}" class="button" style="background-color: #004b87; border-radius: 4px;">Register for Exams</a>
+            </div>
     	</div>
 	</body>
 </html>

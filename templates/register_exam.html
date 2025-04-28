@@ -251,8 +251,8 @@
                         <td>
                             {% if exam.CurrentEnrollment < exam.ExamCapacity %}
                             <form method="POST" action="{{ url_for('register_for_exam', exam_id=exam.Exam_ID) }}" style="display:inline;">
-                                <button type="submit" class="btn" title="register" style="color: #42bd02">
-                                	<i class="fa-solid fa-check"></i>
+                                <button type="submit" style="background-color: #004b87; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 14px;">
+                                    Register
                                 </button>
                             </form>
                             {% else %}

@@ -304,16 +304,10 @@ def register_for_exam(student_id, exam_id):
         if exam['CurrentEnrollment'] >= exam['ExamCapacity']:
             return False, "This exam is full"
             
-        # Register the student and increment CurrentEnrollment
+        # Register the student (trigger will handle CurrentEnrollment update)
         conn.execute(
             "INSERT INTO EXAM_REGISTRATIONS (StudentID, Exam_ID) VALUES (?, ?)",
             (student_id, exam_id)
-        )
-        
-        # Update the CurrentEnrollment count
-        conn.execute(
-            "UPDATE EXAMS SET CurrentEnrollment = CurrentEnrollment + 1 WHERE Exam_ID = ?",
-            (exam_id,)
         )
         
         conn.commit()
