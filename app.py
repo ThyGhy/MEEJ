@@ -217,36 +217,45 @@ def register_exam():
     exam_count = database.get_registered_exam_count(student['StudentID'])
     if exam_count >= 3:
         return render_template('register_exam.html', 
-                            exams=None, 
                             error="Maximum limit of 3 exams reached. Please unregister from an exam before searching for new ones.",
                             exam_count=exam_count)
         
     if request.method == 'POST':
-        # Get search parameters
-        subject = request.form.get('subject')
-        course_num = request.form.get('courseNum')
-        campus = request.form.get('campus')
-        days = request.form.getlist('days[]')
-        min_date = request.form.get('minDate')
-        max_date = request.form.get('maxDate')
+        # Save search criteria to session
+        session['search_criteria'] = {
+            'subject': request.form.get('subject', ''),
+            'courseNum': request.form.get('courseNum', ''),
+            'campus': request.form.get('campus', ''),
+            'days': request.form.getlist('days[]'),
+            'minDate': request.form.get('minDate', ''),
+            'maxDate': request.form.get('maxDate', '')
+        }
         
         # Search for exams, excluding already registered ones
         exams = database.search_exams(
-            subject=subject,
-            course_num=course_num,
-            campus=campus,
-            days=days if days else None,
-            min_date=min_date if min_date else None,
-            max_date=max_date if max_date else None,
+            subject=session['search_criteria']['subject'],
+            course_num=session['search_criteria']['courseNum'],
+            campus=session['search_criteria']['campus'],
+            days=session['search_criteria']['days'] if session['search_criteria']['days'] else None,
+            min_date=session['search_criteria']['minDate'] if session['search_criteria']['minDate'] else None,
+            max_date=session['search_criteria']['maxDate'] if session['search_criteria']['maxDate'] else None,
             student_id=student['StudentID']
         )
         
         return render_template('register_exam.html', 
-                            exams=exams, 
                             exam_count=exam_count)
         
+    # For GET requests, use saved search criteria if it exists
+    search_criteria = session.get('search_criteria', {
+        'subject': '',
+        'courseNum': '',
+        'campus': '',
+        'days': [],
+        'minDate': '',
+        'maxDate': ''
+    })
+    
     return render_template('register_exam.html', 
-                         exams=None, 
                          exam_count=exam_count)
 
 @app.route('/register_for_exam/<int:exam_id>', methods=['POST'])
@@ -262,13 +271,35 @@ def register_for_exam(exam_id):
     # Check if student has reached the exam limit
     exam_count = database.get_registered_exam_count(student['StudentID'])
     if exam_count >= 3:
-        return redirect(url_for('register_exam'))
+        return redirect(url_for('exam_results', error="Maximum limit of 3 exams reached. Please unregister from an exam before registering for new ones."))
         
     success, message = database.register_for_exam(student['StudentID'], exam_id)
     if success:
-        return redirect(url_for('registered_exams'))
+        # Get the search parameters from the form
+        subject = request.form.get('subject')
+        course_num = request.form.get('courseNum')
+        campus = request.form.get('campus')
+        days = request.form.getlist('days[]')
+        min_date = request.form.get('minDate')
+        max_date = request.form.get('maxDate')
+        
+        # Search for exams again to update the list
+        exams = database.search_exams(
+            subject=subject,
+            course_num=course_num,
+            campus=campus,
+            days=days if days else None,
+            min_date=min_date if min_date else None,
+            max_date=max_date if max_date else None,
+            student_id=student['StudentID']
+        )
+        
+        return render_template('exam_results.html',
+                            exam_results=exams,
+                            success="Successfully registered for exam!",
+                            exam_count=exam_count + 1)
     else:
-        return redirect(url_for('register_exam'))
+        return redirect(url_for('exam_results', error=message))
 
 @app.route('/registered_exams')
 def registered_exams():
@@ -323,6 +354,54 @@ def debug_exam_capacity(exam_id):
         success, message = database.debug_clear_exam_registrations(exam_id)
     
     return f"Debug result: {message}"
+
+@app.route('/exam_results', methods=['GET', 'POST'])
+def exam_results():
+    if 'user_id' not in session or session.get('role') != 'Student':
+        return redirect(url_for('login'))
+        
+    # Get student ID from session
+    student = database.get_student_details(session['user_id'])
+    if not student:
+        return redirect(url_for('login'))
+        
+    # Get current exam count
+    exam_count = database.get_registered_exam_count(student['StudentID'])
+    
+    # If student has reached the exam limit, show error and return to register page
+    if exam_count >= 3:
+        return render_template('register_exam.html',
+                            exams=None,
+                            error="Maximum limit of 3 exams reached. Please unregister from an exam before searching for new ones.",
+                            exam_count=exam_count)
+        
+    if request.method == 'POST':
+        # Get search parameters
+        subject = request.form.get('subject')
+        course_num = request.form.get('courseNum')
+        campus = request.form.get('campus')
+        days = request.form.getlist('days[]')
+        min_date = request.form.get('minDate')
+        max_date = request.form.get('maxDate')
+        
+        # Search for exams, excluding already registered ones
+        exams = database.search_exams(
+            subject=subject,
+            course_num=course_num,
+            campus=campus,
+            days=days if days else None,
+            min_date=min_date if min_date else None,
+            max_date=max_date if max_date else None,
+            student_id=student['StudentID']
+        )
+        
+        return render_template('exam_results.html', 
+                            exam_results=exams,
+                            exam_count=exam_count)
+        
+    return render_template('exam_results.html', 
+                         exam_results=None,
+                         exam_count=exam_count)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

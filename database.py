@@ -213,6 +213,19 @@ def get_registered_exam_count(student_id):
 
 def search_exams(subject=None, course_num=None, campus=None, days=None, min_date=None, max_date=None, student_id=None):
     """Search for available exams based on criteria."""
+    # Day mapping for both 3-letter abbreviations and full names
+    day_mapping = {
+        'Sun': '0', 'Sunday': '0',
+        'Mon': '1', 'Monday': '1',
+        'Tue': '2', 'Tuesday': '2',
+        'Wed': '3', 'Wednesday': '3',
+        'Thu': '4', 'Thursday': '4',
+        'Fri': '5', 'Friday': '5',
+        'Sat': '6', 'Saturday': '6',
+        # Also support direct numeric values
+        '0': '0', '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6'
+    }
+
     conn = get_db_connection()
     try:
         query = """
@@ -259,19 +272,14 @@ def search_exams(subject=None, course_num=None, campus=None, days=None, min_date
         if days:
             day_conditions = []
             for day in days:
-                if day == 'Monday':
-                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '1'")
-                elif day == 'Tuesday':
-                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '2'")
-                elif day == 'Wednesday':
-                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '3'")
-                elif day == 'Thursday':
-                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '4'")
-                elif day == 'Friday':
-                    day_conditions.append("strftime('%w', date(e.ExamDate)) = '5'")
+                # Convert day to SQLite format using mapping
+                sqlite_day = day_mapping.get(day)
+                if sqlite_day is not None:
+                    day_conditions.append(f"strftime('%w', date(e.ExamDate)) = '{sqlite_day}'")
             if day_conditions:
                 query += " AND (" + " OR ".join(day_conditions) + ")"
             
+        # Sort by ExamDate and ExamTime
         query += " ORDER BY e.ExamDate, e.ExamTime"
         
         exams = conn.execute(query, params).fetchall()

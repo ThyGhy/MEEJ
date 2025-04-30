@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    	<meta charset="UTF-8">
+    	<title>Available Exams (MEEJ)</title>
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<link rel="stylesheet" href="{{ url_for('static', filename='CSS/sheet-styles.css') }}">
+    	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
+        <style>
+            .show-more-container {
+                text-align: center;
+                margin: 20px 0;
+            }
+            .show-more-button {
+                background-color: #004b87;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 8px 20px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+            .show-more-button:hover {
+                background-color: #003666;
+            }
+            .hidden {
+                display: none;
+            }
+        </style>
+        <script>
+            function showMoreExams() {
+                const hiddenRows = document.querySelectorAll('.exam-row.hidden');
+                const showMoreButton = document.querySelector('.show-more-button');
+                
+                // Show up to 5 more rows
+                for (let i = 0; i < 5 && i < hiddenRows.length; i++) {
+                    hiddenRows[i].classList.remove('hidden');
+                }
+                
+                // Hide the button if no more rows to show
+                if (document.querySelectorAll('.exam-row.hidden').length === 0) {
+                    showMoreButton.style.display = 'none';
+                }
+            }
+        </script>
+	</head>
+
+	<body>
+    	<div class="header-bar">
+			<div class="user-name">{{ session.name }}</div>
+		     <div class="user-email">
+		        <a href="{{ url_for('student_home') }}">home</a> <a href="{{ url_for('login') }}">logout</a>
+		        {{ session.email }}
+		     </div>
+   	 	</div>
+
+    	<div class="content">
+            <br><h1>Available Exams</h1>
+            {% if success %}
+            <div class="success-msg">
+                {{ success }}
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="error-msg">
+                {{ error }}
+            </div>
+            {% endif %}
+            {% if exam_results %}
+       		<table>
+				<tr>
+			    	<th>Course</th>
+			       	<th>Date</th>
+			       	<th>Time</th>
+			       	<th>Campus</th>
+			       	<th>Room</th>
+			       	<th>Proctor</th>
+			       	<th>Capacity</th>
+			       	<th>Action</th>
+			    </tr>
+                {% for exam in exam_results %}
+			    <tr class="exam-row {% if loop.index > 5 %}hidden{% endif %}">
+			       	<td>{{ exam.Class }}</td>
+			       	<td>{{ exam.ExamDate }}</td>
+			       	<td>{{ exam.ExamTime }}</td>
+			       	<td>{{ exam.CampusName }}</td>
+			       	<td>{{ exam.Building }} {{ exam.RoomNumber }}</td>
+			       	<td>{{ exam.ProctorName }}</td>
+			       	<td>{{ exam.CurrentEnrollment }}/{{ exam.ExamCapacity }}</td>
+			       	<td>
+                        {% if exam.CurrentEnrollment < exam.ExamCapacity %}
+                            {% if exam_count < 3 %}
+                            <form method="POST" action="{{ url_for('register_for_exam', exam_id=exam.Exam_ID) }}" style="display:inline;">
+                                <button type="submit" class="register-button">
+                                    Register
+                                </button>
+                            </form>
+                            {% else %}
+                            <button type="button" class="register-button" disabled>
+                                Register
+                            </button>
+                            {% endif %}
+                        {% else %}
+                        <span class="full">Full</span>
+                        {% endif %}
+                    </td>
+			    </tr>
+                {% endfor %}
+       	 	</table>
+
+            {% if exam_results|length > 5 %}
+            <div class="show-more-container">
+                <button class="show-more-button" onclick="showMoreExams()">Show More Exams</button>
+            </div>
+            {% endif %}
+
+            {% else %}
+            <br><p>No exams found matching your search criteria.</p>
+            {% endif %}
+            <div style="text-align: center; margin: 20px 0;">
+                <form method="POST" action="{{ url_for('register_exam') }}" style="display: inline;">
+                    <input type="hidden" name="subject" value="{{ request.form.get('subject', '') }}">
+                    <input type="hidden" name="courseNum" value="{{ request.form.get('courseNum', '') }}">
+                    <input type="hidden" name="campus" value="{{ request.form.get('campus', '') }}">
+                    {% for day in request.form.getlist('days[]') %}
+                    <input type="hidden" name="days[]" value="{{ day }}">
+                    {% endfor %}
+                    <input type="hidden" name="minDate" value="{{ request.form.get('minDate', '') }}">
+                    <input type="hidden" name="maxDate" value="{{ request.form.get('maxDate', '') }}">
+                    <button type="submit" class="return-to-search-button">
+                        Return to Search
+                    </button>
+                </form>
+            </div>
+    	</div>
+	</body>
+</html> 
