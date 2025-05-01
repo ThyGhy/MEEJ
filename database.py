@@ -621,3 +621,35 @@ def debug_subtract_registrations(exam_id, num_to_remove):
     finally:
         conn.close()
 
+def debug_clear_all_sample_data():
+    """Debug function to clear all exam registrations (both sample and student) and reset enrollment counts."""
+    conn = get_db_connection()
+    try:
+        # Get counts before deletion for reporting
+        sample_count = conn.execute("""
+            SELECT COUNT(*) as count 
+            FROM EXAM_REGISTRATIONS 
+            WHERE StudentID >= 900000000
+        """).fetchone()['count']
+        
+        student_count = conn.execute("""
+            SELECT COUNT(*) as count 
+            FROM EXAM_REGISTRATIONS 
+            WHERE StudentID < 900000000
+        """).fetchone()['count']
+        
+        # Remove all registrations (both dummy and real student registrations)
+        conn.execute("DELETE FROM EXAM_REGISTRATIONS")
+        
+        # Reset all exam enrollment counts to zero
+        conn.execute("UPDATE EXAMS SET CurrentEnrollment = 0")
+        
+        conn.commit()
+        return True, f"Successfully cleared {sample_count} sample registrations and {student_count} student registrations. All exam enrollment counts reset to 0."
+        
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error clearing data: {str(e)}"
+    finally:
+        conn.close()
+

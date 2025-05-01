@@ -60,10 +60,6 @@
                         <div class="days-label">Days:</div>
                         <div class="days-options">
                             <div class="day-item">
-                                <input type="checkbox" name="days[]" value="0" id="sunday" {% if '0' in session.get('search_criteria', {}).get('days', []) %}checked{% endif %}>
-                                <label for="sunday">Sun</label>
-                            </div>
-                            <div class="day-item">
                                 <input type="checkbox" name="days[]" value="1" id="monday" {% if '1' in session.get('search_criteria', {}).get('days', []) %}checked{% endif %}>
                                 <label for="monday">Mon</label>
                             </div>
@@ -82,10 +78,6 @@
                             <div class="day-item">
                                 <input type="checkbox" name="days[]" value="5" id="friday" {% if '5' in session.get('search_criteria', {}).get('days', []) %}checked{% endif %}>
                                 <label for="friday">Fri</label>
-                            </div>
-                            <div class="day-item">
-                                <input type="checkbox" name="days[]" value="6" id="saturday" {% if '6' in session.get('search_criteria', {}).get('days', []) %}checked{% endif %}>
-                                <label for="saturday">Sat</label>
                             </div>
                         </div>
                     </div>

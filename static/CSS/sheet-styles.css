@@ -1,6 +1,6 @@
 /* sheet-styles.css */
 
-/* Visual reset - global reset */
+/* global reset */
 * {
 	margin:0;
 	padding:0;
@@ -9,7 +9,22 @@
 }
 
 html {
-    border-top: 15px solid #ffd41c;
+    position: relative;
+}
+
+html::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 15px;
+    background-color: #ffd41c;
+    z-index: 1001;
+}
+
+body {
+    padding-top: 60px;
 }
 
 .header-bar {
@@ -83,7 +98,7 @@ label[type="checkbox"] {
 }
 
 .content {
-	margin-top: 60px;
+	padding-top: 20px;
 	width: 100%;
 }
 
@@ -105,16 +120,17 @@ h1 {
 .container-elem {
    margin-left: auto;
    margin-right: auto;
-   margin-top: 125px;
+   margin-top: 60px;
    background-color: #D3D3D3;
    max-width: 750px;
    border-top: 30px solid #084c94;
+   padding-bottom: 40px;
 }
 
 .container-home {
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 200px;
+	margin-top: 80px;
 	background-color: white;
 	max-width: 422px;
 	display: flex;
@@ -268,12 +284,12 @@ table .btn {
 	margin-left: 20px;
 }
 
-/* Error styles */
+
 .no-results {
 	padding: 10px;
 }
 
-/* Registered Exams specific styles */
+
 .registered-exams h1 {
     text-align: center;
     margin: 20px 0;
@@ -312,7 +328,7 @@ table .btn {
 	margin-left: 12px;
 }
 
-/* Table X button style */
+
 table .btn {
     background: none;
     border: none;
@@ -329,7 +345,7 @@ table .btn {
     text-align: center;
 }
 
-/* Exam Results Page Styles */
+
 .success-msg {
     background-color: #e8f5e9;
     color: #2e7d32;
@@ -348,27 +364,40 @@ table .btn {
     text-align: center;
 }
 
-.show-more-container {
-    text-align: center;
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 20px 0;
+    gap: 10px;
+    padding-right: 35px;
 }
 
-.show-more-button {
+.pagination-button {
     background-color: #004b87;
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 8px 20px;
+    padding: 8px 16px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px;
 }
 
-.show-more-button:hover {
+.pagination-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    margin: 0 15px;
+    color: #333;
+    min-width: 120px;
+    text-align: center;
+}
+
+.pagination-button:hover:not(:disabled) {
     background-color: #003666;
-}
-
-.hidden {
-    display: none;
 }
 
 .register-button {
@@ -390,6 +419,15 @@ table .btn {
     cursor: not-allowed;
 }
 
+.return-search-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.return-search-container form {
+    display: inline;
+}
+
 .return-to-search-button {
     background-color: #004b87;
     color: white;
@@ -404,7 +442,7 @@ table .btn {
     background-color: #003666;
 }
 
-/* Register Exam Page Styles */
+
 .search-box {
     background: #f5f5f5;
     padding: 30px 40px;
@@ -440,6 +478,7 @@ table .btn {
 
 .days-label {
     margin-bottom: 10px;
+    margin-right: 20px;
     text-align: center;
     font-weight: normal;
 }

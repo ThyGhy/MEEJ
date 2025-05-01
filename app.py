@@ -294,10 +294,23 @@ def register_for_exam(exam_id):
             student_id=student['StudentID']
         )
         
+        # Calculate pagination values
+        EXAMS_PER_PAGE = 15
+        total_exams = len(exams)
+        total_pages = (total_exams + EXAMS_PER_PAGE - 1) // EXAMS_PER_PAGE
+        current_page = 1  # After registration, return to first page
+        
+        # Slice exams for current page
+        start_idx = 0  # First page starts at index 0
+        end_idx = EXAMS_PER_PAGE
+        current_page_exams = exams[start_idx:end_idx]
+        
         return render_template('exam_results.html',
-                            exam_results=exams,
+                            exam_results=current_page_exams,
                             success="Successfully registered for exam!",
-                            exam_count=exam_count + 1)
+                            exam_count=exam_count + 1,
+                            current_page=current_page,
+                            total_pages=total_pages)
     else:
         return redirect(url_for('exam_results', error=message))
 
@@ -384,8 +397,14 @@ def exam_results():
         min_date = request.form.get('minDate')
         max_date = request.form.get('maxDate')
         
-        # Search for exams, excluding already registered ones
-        exams = database.search_exams(
+        # Get page number from form, default to 1
+        try:
+            page = int(request.form.get('page', 1))
+        except ValueError:
+            page = 1
+        
+        # Search for all matching exams
+        all_exams = database.search_exams(
             subject=subject,
             course_num=course_num,
             campus=campus,
@@ -395,13 +414,36 @@ def exam_results():
             student_id=student['StudentID']
         )
         
+        # Calculate pagination
+        EXAMS_PER_PAGE = 15
+        total_exams = len(all_exams)
+        total_pages = (total_exams + EXAMS_PER_PAGE - 1) // EXAMS_PER_PAGE  # Ceiling division
+        
+        # Adjust page number if out of bounds
+        page = max(1, min(page, total_pages))
+        
+        # Slice the exams for current page
+        start_idx = (page - 1) * EXAMS_PER_PAGE
+        end_idx = start_idx + EXAMS_PER_PAGE
+        current_page_exams = all_exams[start_idx:end_idx]
+        
         return render_template('exam_results.html', 
-                            exam_results=exams,
-                            exam_count=exam_count)
+                            exam_results=current_page_exams,
+                            exam_count=exam_count,
+                            current_page=page,
+                            total_pages=total_pages)
         
     return render_template('exam_results.html', 
                          exam_results=None,
-                         exam_count=exam_count)
+                         exam_count=exam_count,
+                         current_page=1,
+                         total_pages=1)
+
+@app.route('/debug/clear_all_samples')
+def debug_clear_all_samples():
+    """Debug endpoint to clear all sample exams and registrations."""
+    success, message = database.debug_clear_all_sample_data()
+    return f"Debug result: {message}"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
