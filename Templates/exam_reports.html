@@ -6,90 +6,6 @@
     	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     	<link rel="stylesheet" href="{{ url_for('static', filename='CSS/sheet-styles.css') }}">
     	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-        <style>
-            .page-layout {
-                display: flex;
-                gap: 2em;
-                margin: 20px;
-                min-height: calc(100vh - 100px);
-            }
-            .exams-list {
-                flex: 0 0 50%;
-                overflow-x: auto;
-            }
-            .exam-details {
-                flex: 0 0 45%;
-                position: sticky;
-                top: 20px;
-                padding: 1.5em;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                background-color: #f9f9f9;
-                max-height: calc(100vh - 120px);
-                overflow-y: auto;
-            }
-            .exam-details h2 {
-                color: #333;
-                margin-bottom: 1em;
-                text-align: center;
-            }
-            .exam-info {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5em;
-                margin-bottom: 2em;
-                text-align: center;
-            }
-            .exam-info p {
-                margin: 0.5em 0;
-            }
-            .exam-info strong {
-                color: #444;
-            }
-            .students-list {
-                margin-top: 2em;
-                border-top: 1px solid #ddd;
-                padding-top: 1em;
-            }
-            .students-list h3 {
-                text-align: center;
-                margin-bottom: 1em;
-            }
-            .students-list table {
-                width: 100%;
-                margin-top: 1em;
-            }
-            .view-details-form {
-                display: inline;
-            }
-            .view-details-button {
-                background-color: #4CAF50;
-                color: white;
-                padding: 8px 16px;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                text-decoration: none;
-            }
-            .view-details-button:hover {
-                background-color: #45a049;
-            }
-            .selected .view-details-button {
-                background-color: #2196F3;
-            }
-            .selected .view-details-button:hover {
-                background-color: #1976D2;
-            }
-            .exam-row {
-                cursor: pointer;
-            }
-            .exam-row.selected {
-                background-color: #e3f2fd;
-            }
-            .button-container {
-                margin-top: 20px;
-            }
-        </style>
 	</head>
 
 	<body>
@@ -143,7 +59,7 @@
                 </div>
             </div>
             
-            <div class="exam-details" {% if not selected_exam %}style="display: none;"{% endif %}>
+            <div class="exam-details {% if not selected_exam %}hidden{% endif %}">
                 {% if selected_exam %}
                 <h2>Exam Details: {{ selected_exam.Class }}</h2>
                 <div class="exam-info">
