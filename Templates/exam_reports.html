@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    	<meta charset="UTF-8">
+    	<title>Your Exams (MEEJ)</title>
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<link rel="stylesheet" href="{{ url_for('static', filename='CSS/sheet-styles.css') }}">
+    	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
+        <style>
+            .page-layout {
+                display: flex;
+                gap: 2em;
+                margin: 20px;
+                min-height: calc(100vh - 100px);
+            }
+            .exams-list {
+                flex: 0 0 50%;
+                overflow-x: auto;
+            }
+            .exam-details {
+                flex: 0 0 45%;
+                position: sticky;
+                top: 20px;
+                padding: 1.5em;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                background-color: #f9f9f9;
+                max-height: calc(100vh - 120px);
+                overflow-y: auto;
+            }
+            .exam-details h2 {
+                color: #333;
+                margin-bottom: 1em;
+                text-align: center;
+            }
+            .exam-info {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5em;
+                margin-bottom: 2em;
+                text-align: center;
+            }
+            .exam-info p {
+                margin: 0.5em 0;
+            }
+            .exam-info strong {
+                color: #444;
+            }
+            .students-list {
+                margin-top: 2em;
+                border-top: 1px solid #ddd;
+                padding-top: 1em;
+            }
+            .students-list h3 {
+                text-align: center;
+                margin-bottom: 1em;
+            }
+            .students-list table {
+                width: 100%;
+                margin-top: 1em;
+            }
+            .view-details-form {
+                display: inline;
+            }
+            .view-details-button {
+                background-color: #4CAF50;
+                color: white;
+                padding: 8px 16px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                text-decoration: none;
+            }
+            .view-details-button:hover {
+                background-color: #45a049;
+            }
+            .selected .view-details-button {
+                background-color: #2196F3;
+            }
+            .selected .view-details-button:hover {
+                background-color: #1976D2;
+            }
+            .exam-row {
+                cursor: pointer;
+            }
+            .exam-row.selected {
+                background-color: #e3f2fd;
+            }
+            .button-container {
+                margin-top: 20px;
+            }
+        </style>
+	</head>
+
+	<body>
+    	<div class="header-bar">
+			<div class="user-name">{{ session.name }}</div>
+		    <div class="user-email">
+		        <a href="{{ url_for('faculty_home') }}">home</a> <a href="{{ url_for('login') }}">logout</a>
+		        {{ session.email }}
+		    </div>
+   	 	</div>
+
+    	<div class="page-layout">
+            <div class="exams-list">
+                <h1>Your Proctored Exams</h1>
+                {% if exams %}
+                <table>
+                    <tr>
+                        <th>Course</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Campus</th>
+                        <th>Room</th>
+                        <th>Enrollment</th>
+                        <th>Action</th>
+                    </tr>
+                    {% for exam in exams %}
+                    <tr class="exam-row {% if selected_exam and selected_exam.Exam_ID == exam.Exam_ID %}selected{% endif %}">
+                        <td>{{ exam.Class }}</td>
+                        <td>{{ exam.ExamDate }}</td>
+                        <td>{{ exam.ExamTime }}</td>
+                        <td>{{ exam.CampusName }}</td>
+                        <td>{{ exam.Building }} {{ exam.RoomNumber }}</td>
+                        <td>{{ exam.CurrentEnrollment }}/{{ exam.ExamCapacity }}</td>
+                        <td>
+                            <form method="POST" class="view-details-form">
+                                <input type="hidden" name="exam_id" value="{{ exam.Exam_ID }}">
+                                <button type="submit" class="view-details-button">View Details</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                <p>You have no exams scheduled at this time.</p>
+                {% endif %}
+                
+                <div class="button-container">
+                    <a href="{{ url_for('create_exam') }}">
+                        <button class="btn">Create New Exam</button>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="exam-details" {% if not selected_exam %}style="display: none;"{% endif %}>
+                {% if selected_exam %}
+                <h2>Exam Details: {{ selected_exam.Class }}</h2>
+                <div class="exam-info">
+                    <p><strong>Date:</strong> {{ selected_exam.ExamDate }}</p>
+                    <p><strong>Time:</strong> {{ selected_exam.ExamTime }}</p>
+                    <p><strong>Location:</strong> {{ selected_exam.CampusName }}</p>
+                    <p><strong>Room:</strong> {{ selected_exam.Building }} {{ selected_exam.RoomNumber }}</p>
+                    <p><strong>Current Enrollment:</strong> {{ selected_exam.CurrentEnrollment }}/{{ selected_exam.ExamCapacity }}</p>
+                    <p><strong>Exam Name:</strong> {{ selected_exam.Exam_Name }}</p>
+                </div>
+
+                <div class="students-list">
+                    <h3>Registered Students</h3>
+                    {% if registered_students %}
+                    <table>
+                        <tr>
+                            <th>Name</th>
+                            <th>NSHE ID</th>
+                            <th>Email</th>
+                            <th>Registration Date</th>
+                        </tr>
+                        {% for student in registered_students %}
+                        <tr>
+                            <td>{{ student.LastName }}, {{ student.FirstName }}</td>
+                            <td>{{ student.NSHEID }}</td>
+                            <td>{{ student.Email }}</td>
+                            <td>{{ student.RegistrationDate }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% else %}
+                    <p>No students are currently registered for this exam.</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+    	</div>
+	</body>
+</html> 

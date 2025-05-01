@@ -445,5 +445,52 @@ def debug_clear_all_samples():
     success, message = database.debug_clear_all_sample_data()
     return f"Debug result: {message}"
 
+@app.route('/exam_reports', methods=['GET', 'POST'])
+def exam_reports():
+    if 'user_id' not in session or session.get('role') != 'Faculty':
+        return redirect(url_for('login'))
+        
+    # Get faculty details from session
+    faculty = database.get_faculty_details(session['user_id'])
+    if not faculty:
+        return redirect(url_for('login'))
+    
+    selected_exam = None
+    registered_students = []
+    
+    # Handle POST request for viewing exam details
+    if request.method == 'POST' and request.form.get('exam_id'):
+        exam_id = int(request.form.get('exam_id'))
+        exam, students = database.get_exam_details(exam_id)
+        if exam and exam['ProctorID'] == faculty['FacultyID']:
+            selected_exam = exam
+            registered_students = students
+        
+    # Get all exams where this faculty member is the proctor
+    exams = database.get_faculty_exams(faculty['FacultyID'])
+    return render_template('exam_reports.html', 
+                         exams=exams, 
+                         selected_exam=selected_exam, 
+                         registered_students=registered_students)
+
+@app.route('/exam_details/<int:exam_id>')
+def exam_details(exam_id):
+    if 'user_id' not in session or session.get('role') != 'Faculty':
+        return redirect(url_for('login'))
+        
+    # Get faculty details from session
+    faculty = database.get_faculty_details(session['user_id'])
+    if not faculty:
+        return redirect(url_for('login'))
+        
+    # Get exam details and registered students
+    exam, students = database.get_exam_details(exam_id)
+    
+    # Verify this exam belongs to the faculty member
+    if not exam or exam['ProctorID'] != faculty['FacultyID']:
+        return redirect(url_for('exam_reports'))
+        
+    return render_template('exam_details.html', exam=exam, students=students)
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

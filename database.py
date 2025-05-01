@@ -653,3 +653,66 @@ def debug_clear_all_sample_data():
     finally:
         conn.close()
 
+def get_faculty_exams(faculty_id):
+    """Get all exams where the faculty member is the proctor."""
+    conn = get_db_connection()
+    try:
+        exams = conn.execute("""
+            SELECT 
+                e.*,
+                l.CampusName,
+                l.Building,
+                l.RoomNumber,
+                COUNT(DISTINCT er.StudentID) as RegisteredCount
+            FROM EXAMS e
+            JOIN LOCATION l ON e.LocationID = l.LocationID
+            LEFT JOIN EXAM_REGISTRATIONS er ON e.Exam_ID = er.Exam_ID
+            WHERE e.ProctorID = ?
+            GROUP BY e.Exam_ID, e.LocationID, e.Exam_Name, e.ExamDate, e.ExamTime,
+                     e.ProctorID, e.ExamCapacity, e.CurrentEnrollment, e.Class,
+                     l.CampusName, l.Building, l.RoomNumber
+            ORDER BY e.ExamDate DESC, e.ExamTime DESC
+        """, (faculty_id,)).fetchall()
+        return exams
+    finally:
+        conn.close()
+
+def get_exam_details(exam_id):
+    """Get detailed exam information including registered students."""
+    conn = get_db_connection()
+    try:
+        # Get exam details
+        exam = conn.execute("""
+            SELECT 
+                e.*,
+                l.CampusName,
+                l.Building,
+                l.RoomNumber,
+                f.FirstName || ' ' || f.LastName as ProctorName
+            FROM EXAMS e
+            JOIN LOCATION l ON e.LocationID = l.LocationID
+            JOIN FACULTY f ON e.ProctorID = f.FacultyID
+            WHERE e.Exam_ID = ?
+        """, (exam_id,)).fetchone()
+        
+        if not exam:
+            return None, []
+            
+        # Get registered students
+        students = conn.execute("""
+            SELECT 
+                s.FirstName,
+                s.LastName,
+                s.Email,
+                s.NSHEID,
+                er.RegistrationDate
+            FROM EXAM_REGISTRATIONS er
+            JOIN STUDENTS s ON er.StudentID = s.StudentID
+            WHERE er.Exam_ID = ?
+            ORDER BY s.LastName, s.FirstName
+        """, (exam_id,)).fetchall()
+        
+        return exam, students
+    finally:
+        conn.close()
+
