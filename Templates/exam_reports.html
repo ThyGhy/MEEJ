@@ -29,7 +29,7 @@
                         <th>Campus</th>
                         <th>Room</th>
                         <th>Enrollment</th>
-                        <th>Action</th>
+                        <th>Actions</th>
                     </tr>
                     {% for exam in exams %}
                     <tr class="exam-row {% if selected_exam and selected_exam.Exam_ID == exam.Exam_ID %}selected{% endif %}">
@@ -39,22 +39,52 @@
                         <td>{{ exam.CampusName }}</td>
                         <td>{{ exam.Building }} {{ exam.RoomNumber }}</td>
                         <td>{{ exam.CurrentEnrollment }}/{{ exam.ExamCapacity }}</td>
-                        <td>
-                            <form method="POST" class="view-details-form">
+                        <td style="display: flex; gap: 5px; justify-content: center;">
+                            <form method="POST" class="view-details-form" style="margin: 0;">
                                 <input type="hidden" name="exam_id" value="{{ exam.Exam_ID }}">
+                                <input type="hidden" name="page" value="{{ current_page }}">
                                 <button type="submit" class="view-details-button">View Details</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('delete_exam', exam_id=exam.Exam_ID) }}" 
+                                  onsubmit="return confirm('Are you sure you want to delete this exam? This will unregister all students and cannot be undone.');"
+                                  style="margin: 0;">
+                                <input type="hidden" name="page" value="{{ current_page }}">
+                                <button type="submit" class="delete-button">Delete</button>
                             </form>
                         </td>
                     </tr>
                     {% endfor %}
                 </table>
+
+                {% if total_pages > 1 %}
+                <div class="pagination">
+                    <form method="POST" action="{{ url_for('exam_reports') }}">
+                        <button type="submit" name="page" value="{{ current_page - 1 }}" 
+                                class="pagination-button" 
+                                {% if current_page <= 1 %}disabled{% endif %}>
+                            Previous
+                        </button>
+                        
+                        <span class="pagination-info">
+                            Page {{ current_page }} of {{ total_pages }}
+                        </span>
+                        
+                        <button type="submit" name="page" value="{{ current_page + 1 }}"
+                                class="pagination-button"
+                                {% if current_page >= total_pages %}disabled{% endif %}>
+                            Next
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
                 {% else %}
                 <p>You have no exams scheduled at this time.</p>
                 {% endif %}
                 
-                <div class="button-container">
-                    <a href="{{ url_for('create_exam') }}">
-                        <button class="btn">Create New Exam</button>
+                <div class="button-container" style="text-align: center; margin-top: 20px;">
+                    <a href="{{ url_for('create_exam') }}" style="text-decoration: none;">
+                        <button class="return-to-search-button">Create New Exam</button>
                     </a>
                 </div>
             </div>

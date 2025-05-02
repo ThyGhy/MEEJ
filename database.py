@@ -33,7 +33,7 @@ def get_student_details(auth_id):
     conn.close()
     return student
 
-def get_faculty_details(faculty_id):
+def get_faculty_details(auth_id):
     """Get faculty details including authentication info."""
     conn = get_db_connection()
     try:
@@ -44,8 +44,8 @@ def get_faculty_details(faculty_id):
                 a.Role
             FROM FACULTY f
             JOIN AUTHENTICATION a ON f.Auth_ID = a.Auth_ID
-            WHERE f.FacultyID = ?
-        """, (faculty_id,)).fetchone()
+            WHERE f.Auth_ID = ?
+        """, (auth_id,)).fetchone()
         return faculty
     except Exception as e:
         print(f"Error getting faculty details: {str(e)}")  # Debug log
@@ -638,10 +638,9 @@ def debug_clear_all_sample_data():
             WHERE StudentID < 900000000
         """).fetchone()['count']
         
-        # Remove all registrations (both dummy and real student registrations)
+        # Remove all registrations (Very Dangerous)
         conn.execute("DELETE FROM EXAM_REGISTRATIONS")
         
-        # Reset all exam enrollment counts to zero
         conn.execute("UPDATE EXAMS SET CurrentEnrollment = 0")
         
         conn.commit()
@@ -713,6 +712,24 @@ def get_exam_details(exam_id):
         """, (exam_id,)).fetchall()
         
         return exam, students
+    finally:
+        conn.close()
+
+def delete_exam(exam_id):
+    """Delete an exam and all its registrations."""
+    conn = get_db_connection()
+    try:
+        # First delete all registrations for this exam
+        conn.execute("DELETE FROM EXAM_REGISTRATIONS WHERE Exam_ID = ?", (exam_id,))
+        
+        # Then delete the exam itself
+        conn.execute("DELETE FROM EXAMS WHERE Exam_ID = ?", (exam_id,))
+        
+        conn.commit()
+        return True, "Exam and all registrations deleted successfully"
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error deleting exam: {str(e)}"
     finally:
         conn.close()
 

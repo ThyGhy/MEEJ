@@ -458,6 +458,12 @@ def exam_reports():
     selected_exam = None
     registered_students = []
     
+    # Get page number from form, default to 1
+    try:
+        page = int(request.form.get('page', 1))
+    except ValueError:
+        page = 1
+    
     # Handle POST request for viewing exam details
     if request.method == 'POST' and request.form.get('exam_id'):
         exam_id = int(request.form.get('exam_id'))
@@ -467,11 +473,27 @@ def exam_reports():
             registered_students = students
         
     # Get all exams where this faculty member is the proctor
-    exams = database.get_faculty_exams(faculty['FacultyID'])
+    all_exams = database.get_faculty_exams(faculty['FacultyID'])
+    
+    # Calculate pagination
+    EXAMS_PER_PAGE = 10
+    total_exams = len(all_exams)
+    total_pages = (total_exams + EXAMS_PER_PAGE - 1) // EXAMS_PER_PAGE  # Ceiling division
+    
+    # Adjust page number if out of bounds
+    page = max(1, min(page, total_pages))
+    
+    # Slice the exams for current page
+    start_idx = (page - 1) * EXAMS_PER_PAGE
+    end_idx = start_idx + EXAMS_PER_PAGE
+    current_page_exams = all_exams[start_idx:end_idx]
+    
     return render_template('exam_reports.html', 
-                         exams=exams, 
+                         exams=current_page_exams, 
                          selected_exam=selected_exam, 
-                         registered_students=registered_students)
+                         registered_students=registered_students,
+                         current_page=page,
+                         total_pages=total_pages)
 
 @app.route('/exam_details/<int:exam_id>')
 def exam_details(exam_id):
@@ -491,6 +513,30 @@ def exam_details(exam_id):
         return redirect(url_for('exam_reports'))
         
     return render_template('exam_details.html', exam=exam, students=students)
+
+@app.route('/delete_exam/<int:exam_id>', methods=['POST'])
+def delete_exam(exam_id):
+    if 'user_id' not in session or session.get('role') != 'Faculty':
+        return redirect(url_for('login'))
+        
+    # Get faculty details from session
+    faculty = database.get_faculty_details(session['user_id'])
+    if not faculty:
+        return redirect(url_for('login'))
+    
+    # Get the exam to verify ownership
+    exam = database.get_exam_details(exam_id)[0]  # get_exam_details returns (exam, students)
+    if not exam or exam['ProctorID'] != faculty['FacultyID']:
+        return redirect(url_for('exam_reports'))
+    
+    # Delete the exam and all its registrations
+    success, message = database.delete_exam(exam_id)
+    
+    # Preserve the page number
+    page = request.form.get('page', 1, type=int)
+    
+    # Redirect back to exam reports with the same page number
+    return redirect(url_for('exam_reports', page=page))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
