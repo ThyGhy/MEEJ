@@ -1,76 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-    	<meta charset="UTF-8">
-
-    	<title>Create an Exam</title>
-    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    	<link rel="stylesheet" href="{{ url_for('static', filename='CSS/sheet-styles.css') }}">
-
-    	<!-- favicon code below-->
-    	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
-    </head>
-
-	<body>
-    	<div class="header-bar">
-		   <div class="user-name">{{ session.name }}</div>
-		   <div class="user-email">
-		      <a href="{{ url_for('faculty_home') }}">home</a> <a href="{{ url_for('login') }}">logout</a>
-		      {{ session.email }}
-		   </div>
-   	 	</div>
-
-    	<div class="container-elem content">
-    		<h1>Create Exam</h1>
-            {% if error %}
-            <div class="error-msg" style="background-color: #ffebee; color: #c62828; padding: 10px; margin-bottom: 20px; border-radius: 4px; text-align: center;">
-                {{ error }}
-            </div>
-            {% endif %}
-            <div class="search-box">
-                <form method="POST" action="{{ url_for('create_exam') }}">
-                    <div class="form-group">
-                        <label for="subject">Subject:</label>
-                        <select name="subject" id="subject">
-                            <option value="CS">CS</option>
-                            <option value="CIT">CIT</option>
-                            <option value="CSCO">CSCO</option>
-                            <option value="CSEC">CSEC</option>
-                            <option value="IS">IS</option>
-                            <option value="GIS">GIS</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="courseNum">Course Number:</label>
-                        <input type="text" name="courseNum" id="courseNum" required placeholder="e.g. 101">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="campus">Campus:</label>
-                        <select name="campus" id="campus">
-                            <option value="West Charleston">West Charleston</option>
-                            <option value="North Las Vegas">North Las Vegas</option>
-                            <option value="Henderson">Henderson</option>
-                        </select>
-                    </div>
-
-                    <div class="date-section">
-                        <span>Date:</span>
-                    	<input type="date" name="date" value="{{ request.form.get('ExamDate', '') }}">
-                    </div>
-
-                    <div class="time-section">
-                    	<span>Time:</span>
-                    	<input type="time" name="time" value="{{ request.form.get('ExamTime', '') }}">
-                    </div>
-
-                    <div class="search-button">
-                        <button type="submit">Create Exam</button>
-                    </div>
-                </form>
-            </div>
-    	</div>
-	</body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Placeholder</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div>Placeholder</div>
+</body>
 </html>
