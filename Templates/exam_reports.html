@@ -20,6 +20,41 @@
     	<div class="page-layout">
             <div class="exams-list">
                 <h1>Your Proctored Exams</h1>
+                <!-- Filter Form -->
+                <form method="POST" action="{{ url_for('exam_reports') }}" class="filter-form">
+                    <div class="form-group">
+                        <label for="filter_subject">Subject:</label>
+                        <select name="filter_subject" id="filter_subject">
+                            <option value="">All Subjects</option>
+                            <option value="CS" {% if filter_subject == 'CS' %}selected{% endif %}>CS</option>
+                            <option value="CIT" {% if filter_subject == 'CIT' %}selected{% endif %}>CIT</option>
+                            <option value="CSCO" {% if filter_subject == 'CSCO' %}selected{% endif %}>CSCO</option>
+                            <option value="CSEC" {% if filter_subject == 'CSEC' %}selected{% endif %}>CSEC</option>
+                            <option value="IS" {% if filter_subject == 'IS' %}selected{% endif %}>IS</option>
+                            <option value="GIS" {% if filter_subject == 'GIS' %}selected{% endif %}>GIS</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filter_campus">Campus:</label>
+                        <select name="filter_campus" id="filter_campus">
+                            <option value="">All Campuses</option>
+                            <option value="West Charleston" {% if filter_campus == 'West Charleston' %}selected{% endif %}>West Charleston</option>
+                            <option value="Henderson" {% if filter_campus == 'Henderson' %}selected{% endif %}>Henderson</option>
+                            <option value="North Las Vegas" {% if filter_campus == 'North Las Vegas' %}selected{% endif %}>North Las Vegas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="enrollment_sort">Enrollment:</label>
+                        <select name="enrollment_sort" id="enrollment_sort">
+                            <option value="desc" {% if enrollment_sort == 'desc' %}selected{% endif %}>Highest to Lowest</option>
+                            <option value="asc" {% if enrollment_sort == 'asc' %}selected{% endif %}>Lowest to Highest</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit">Apply Filters</button>
+                    </div>
+                </form>
+                <!-- End Filter Form -->
                 {% if exams %}
                 <table>
                     <tr>
@@ -43,12 +78,18 @@
                             <form method="POST" class="view-details-form" style="margin: 0;">
                                 <input type="hidden" name="exam_id" value="{{ exam.Exam_ID }}">
                                 <input type="hidden" name="page" value="{{ current_page }}">
+                                <input type="hidden" name="filter_subject" value="{{ filter_subject }}">
+                                <input type="hidden" name="filter_campus" value="{{ filter_campus }}">
+                                <input type="hidden" name="enrollment_sort" value="{{ enrollment_sort }}">
                                 <button type="submit" class="view-details-button">View Details</button>
                             </form>
                             <form method="POST" action="{{ url_for('delete_exam', exam_id=exam.Exam_ID) }}" 
                                   onsubmit="return confirm('Are you sure you want to delete this exam? This will unregister all students and cannot be undone.');"
                                   style="margin: 0;">
                                 <input type="hidden" name="page" value="{{ current_page }}">
+                                <input type="hidden" name="filter_subject" value="{{ filter_subject }}">
+                                <input type="hidden" name="filter_campus" value="{{ filter_campus }}">
+                                <input type="hidden" name="enrollment_sort" value="{{ enrollment_sort }}">
                                 <button type="submit" class="delete-button">Delete</button>
                             </form>
                         </td>

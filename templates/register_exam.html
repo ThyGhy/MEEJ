@@ -49,8 +49,8 @@
                     <div class="form-group">
                         <label for="campus">Campus:</label>
                         <select name="campus" id="campus">
-                            <option value="" {% if not session.get('search_criteria', {}).get('campus') %}selected{% endif %}>All Campuses</option>
-                            <option value="Charleston" {% if session.get('search_criteria', {}).get('campus') == 'Charleston' %}selected{% endif %}>Charleston</option>
+                            <option value="">All Campuses</option>
+                            <option value="West Charleston" {% if session.get('search_criteria', {}).get('campus') == 'West Charleston' %}selected{% endif %}>West Charleston</option>
                             <option value="Henderson" {% if session.get('search_criteria', {}).get('campus') == 'Henderson' %}selected{% endif %}>Henderson</option>
                             <option value="North Las Vegas" {% if session.get('search_criteria', {}).get('campus') == 'North Las Vegas' %}selected{% endif %}>North Las Vegas</option>
                         </select>

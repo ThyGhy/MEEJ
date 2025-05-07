@@ -3,21 +3,90 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Placeholder</title>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: sans-serif;
-    }
-  </style>
+  <title>Create Exam</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='CSS/sheet-styles.css') }}">
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/CSN-2CV.png') }}">
 </head>
 <body>
-  <div>Placeholder</div>
+  <div class="header-bar">
+    <div class="user-name">{{ session.name }}</div>
+    <div class="user-email">
+      <a href="{{ url_for('exam_reports') }}">home</a> <a href="{{ url_for('login') }}">logout</a>
+      {{ session.email }}
+    </div>
+  </div>
+
+  <div class="container-elem content">
+    <h1>Create New Exam</h1>
+    {% if error %}
+    <div class="error-msg">
+      {{ error }}
+    </div>
+    {% endif %}
+    {% if success %}
+    <div class="success-msg">
+      {{ success }}
+    </div>
+    {% endif %}
+    
+    <form method="POST" action="{{ url_for('create_exam') }}" class="create-exam-form">
+      <div class="form-group">
+        <label for="subject">Subject:</label>
+        <select name="subject" id="subject" required>
+          <option value="">Select Subject</option>
+          <option value="CS">CS</option>
+          <option value="CIT">CIT</option>
+          <option value="CSCO">CSCO</option>
+          <option value="CSEC">CSEC</option>
+          <option value="IS">IS</option>
+          <option value="GIS">GIS</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="courseNum">Course Number:</label>
+        <input type="text" name="courseNum" id="courseNum" required placeholder="e.g. 135">
+      </div>
+
+      <div class="form-group">
+        <label for="examName">Exam Name:</label>
+        <input type="text" name="examName" id="examName" required placeholder="e.g. Midterm Exam">
+      </div>
+
+      <div class="form-group">
+        <label for="campus">Campus:</label>
+        <select name="campus" id="campus" required>
+          <option value="">Select Campus</option>
+          <option value="West Charleston">West Charleston</option>
+          <option value="Henderson">Henderson</option>
+          <option value="North Las Vegas">North Las Vegas</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="building">Building:</label>
+        <input type="text" name="building" id="building" required placeholder="e.g. A">
+      </div>
+
+      <div class="form-group">
+        <label for="roomNumber">Room Number:</label>
+        <input type="text" name="roomNumber" id="roomNumber" required placeholder="e.g. 101">
+      </div>
+
+      <div class="form-group">
+        <label for="examDate">Exam Date:</label>
+        <input type="date" name="examDate" id="examDate" required>
+      </div>
+
+      <div class="form-group">
+        <label for="examTime">Exam Time:</label>
+        <input type="time" name="examTime" id="examTime" required>
+      </div>
+
+      <div class="form-group">
+        <button type="submit">Create Exam</button>
+      </div>
+    </form>
+  </div>
 </body>
 </html>

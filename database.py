@@ -733,3 +733,65 @@ def delete_exam(exam_id):
     finally:
         conn.close()
 
+def create_exam(faculty_id, location_id, exam_name, exam_date, exam_time, exam_capacity, class_name):
+    """Create a new exam in the database."""
+    conn = get_db_connection()
+    try:
+        # First check if the location exists
+        location = conn.execute(
+            "SELECT 1 FROM LOCATION WHERE LocationID = ?",
+            (location_id,)
+        ).fetchone()
+        
+        if not location:
+            return False, "Location not found"
+            
+        # Create the exam
+        conn.execute("""
+            INSERT INTO EXAMS 
+            (LocationID, Exam_Name, ExamDate, ExamTime, ProctorID, ExamCapacity, Class)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (location_id, exam_name, exam_date, exam_time, faculty_id, exam_capacity, class_name))
+        
+        conn.commit()
+        return True, "Exam created successfully"
+        
+    except sqlite3.IntegrityError as e:
+        conn.rollback()
+        return False, f"Database error: {str(e)}"
+    except Exception as e:
+        conn.rollback()
+        return False, f"Error: {str(e)}"
+    finally:
+        conn.close()
+
+def get_or_create_location(campus, building, room_number):
+    """Get location ID if exists, create if not."""
+    conn = get_db_connection()
+    try:
+        # Check if location exists
+        location = conn.execute("""
+            SELECT LocationID 
+            FROM LOCATION 
+            WHERE CampusName = ? AND Building = ? AND RoomNumber = ?
+        """, (campus, building, room_number)).fetchone()
+        
+        if location:
+            return location['LocationID']
+            
+        # Create new location
+        conn.execute("""
+            INSERT INTO LOCATION (CampusName, Building, RoomNumber)
+            VALUES (?, ?, ?)
+        """, (campus, building, room_number))
+        
+        location_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+        conn.commit()
+        return location_id
+        
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
+

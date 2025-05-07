@@ -347,6 +347,59 @@ def cancel_registration(exam_id):
 def create_exam():
     if 'user_id' not in session or session.get('role') != 'Faculty':
         return redirect(url_for('login'))
+        
+    # Get faculty details from session
+    faculty = database.get_faculty_details(session['user_id'])
+    if not faculty:
+        return redirect(url_for('login'))
+        
+    if request.method == 'POST':
+        try:
+            # Get form data
+            subject = request.form.get('subject')
+            course_num = request.form.get('courseNum')
+            exam_name = request.form.get('examName')
+            campus = request.form.get('campus')
+            building = request.form.get('building')
+            room_number = request.form.get('roomNumber')
+            exam_date = request.form.get('examDate')
+            exam_time = request.form.get('examTime')
+            
+            # Exam capacity is always 20
+            exam_capacity = 20
+            
+            # Validate inputs
+            if not all([subject, course_num, exam_name, campus, building, room_number, exam_date, exam_time]):
+                return render_template('create_exam.html', error="All fields are required")
+                
+            # Create class name by combining subject and course number
+            class_name = f"{subject} {course_num}"
+            
+            # Get or create location
+            try:
+                location_id = database.get_or_create_location(campus, building, room_number)
+            except Exception as e:
+                return render_template('create_exam.html', error=f"Error creating location: {str(e)}")
+                
+            # Create the exam
+            success, message = database.create_exam(
+                faculty_id=faculty['FacultyID'],
+                location_id=location_id,
+                exam_name=exam_name,
+                exam_date=exam_date,
+                exam_time=exam_time,
+                exam_capacity=exam_capacity,
+                class_name=class_name
+            )
+            
+            if success:
+                return render_template('create_exam.html', success=message)
+            else:
+                return render_template('create_exam.html', error=message)
+                
+        except Exception as e:
+            return render_template('create_exam.html', error=f"Error creating exam: {str(e)}")
+            
     return render_template('create_exam.html')
 
 @app.route('/debug/exams')
@@ -457,13 +510,40 @@ def exam_reports():
     
     selected_exam = None
     registered_students = []
+
+    # --- FILTERS ---
+    filter_subject = ''
+    filter_campus = ''
+    enrollment_sort = 'desc'  # Default: Highest to Lowest
     
+    if request.method == 'POST':
+        filter_subject = request.form.get('filter_subject', '')
+        filter_campus = request.form.get('filter_campus', '')
+        enrollment_sort = request.form.get('enrollment_sort', 'desc')
+    else:
+        filter_subject = request.args.get('filter_subject', '')
+        filter_campus = request.args.get('filter_campus', '')
+        enrollment_sort = request.args.get('enrollment_sort', 'desc')
+
+    # Get all exams where this faculty member is the proctor
+    all_exams = database.get_faculty_exams(faculty['FacultyID'])
+
+    # Apply filters
+    if filter_subject:
+        all_exams = [exam for exam in all_exams if exam['Class'].startswith(filter_subject)]
+    if filter_campus:
+        all_exams = [exam for exam in all_exams if exam['CampusName'] == filter_campus]
+    # Sort by enrollment
+    all_exams = sorted(all_exams, key=lambda x: x['CurrentEnrollment'], reverse=(enrollment_sort == 'desc'))
+
+    # --- END FILTERS ---
+
     # Get page number from form, default to 1
     try:
         page = int(request.form.get('page', 1))
     except ValueError:
         page = 1
-    
+
     # Handle POST request for viewing exam details
     if request.method == 'POST' and request.form.get('exam_id'):
         exam_id = int(request.form.get('exam_id'))
@@ -471,9 +551,6 @@ def exam_reports():
         if exam and exam['ProctorID'] == faculty['FacultyID']:
             selected_exam = exam
             registered_students = students
-        
-    # Get all exams where this faculty member is the proctor
-    all_exams = database.get_faculty_exams(faculty['FacultyID'])
     
     # Calculate pagination
     EXAMS_PER_PAGE = 10
@@ -493,7 +570,10 @@ def exam_reports():
                          selected_exam=selected_exam, 
                          registered_students=registered_students,
                          current_page=page,
-                         total_pages=total_pages)
+                         total_pages=total_pages,
+                         filter_subject=filter_subject,
+                         filter_campus=filter_campus,
+                         enrollment_sort=enrollment_sort)
 
 @app.route('/exam_details/<int:exam_id>')
 def exam_details(exam_id):
