@@ -288,39 +288,39 @@ def search_exams(subject=None, course_num=None, campus=None, days=None, min_date
         conn.close()
 
 def register_for_exam(student_id, exam_id):
-    """Register a student for an exam."""
+    """Register a student for an exam, stamping the time in 12-hour AM/PM format."""
     conn = get_db_connection()
     try:
-        # Check if student is already registered for this exam
+        # 1) Check if student is already registered for this exam
         existing = conn.execute(
             "SELECT 1 FROM EXAM_REGISTRATIONS WHERE StudentID = ? AND Exam_ID = ?",
             (student_id, exam_id)
         ).fetchone()
-        
         if existing:
             return False, "You are already registered for this exam"
-            
-        # Check if exam is full
+        
+        # 2) Check if exam exists and has available seats
         exam = conn.execute(
             "SELECT ExamCapacity, CurrentEnrollment FROM EXAMS WHERE Exam_ID = ?",
             (exam_id,)
         ).fetchone()
-        
         if not exam:
             return False, "Exam not found"
-            
         if exam['CurrentEnrollment'] >= exam['ExamCapacity']:
             return False, "This exam is full"
-            
-        # Register the student (trigger will handle CurrentEnrollment update)
+        
+        # 3) Build a 12-hour timestamp (e.g. "2025-05-11 02:45 PM")
+        reg_time = datetime.datetime.now().strftime('%Y-%m-%d %I:%M %p')
+        
+        # 4) Insert registration with explicit RegistrationDate
         conn.execute(
-            "INSERT INTO EXAM_REGISTRATIONS (StudentID, Exam_ID) VALUES (?, ?)",
-            (student_id, exam_id)
+            "INSERT INTO EXAM_REGISTRATIONS (StudentID, Exam_ID, RegistrationDate) VALUES (?, ?, ?)",
+            (student_id, exam_id, reg_time)
         )
         
         conn.commit()
         return True, "Successfully registered for exam"
-        
+    
     except sqlite3.IntegrityError as e:
         conn.rollback()
         return False, str(e)
