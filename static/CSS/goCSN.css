@@ -1,0 +1,419 @@
+/* Visual reset - global reset */
+html, body {
+margin:0;
+padding:0;
+box-sizing: border-box;
+}
+    
+/* Visual reset - Set up for footer */
+html, body, form, #pswrapper {
+display:block;
+height:100%; 
+color: white;
+font-size:16px;
+background-color: #283464;
+}
+    
+html {
+    border-top: 100px solid #283464
+}
+    
+    form { 
+    display:flex; flex-direction:column;
+    } 
+    
+    body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    display: block;
+    }
+    
+    .logout p {
+        color: black;
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    
+    .container-elem {
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 125px;
+        background-color: white;
+        max-width: 500px;
+        border: 1px solid black;
+        border-radius: 5px;
+        box-shadow: 0px 10px 6px -6px black;
+        padding-bottom: 20px; /* Added extra padding at the bottom */
+    }
+    
+    .container-elem img {
+        margin: auto;
+        margin-top: 25px;
+        position: center;
+        padding: 15px;
+        display: block;
+    }
+    
+    label[for=fullname] {
+        color: black;
+        margin-left: 90px;
+        line-height: 30px;
+    }
+    
+    label[for=firstname] {
+        color: black;
+        margin-left: 90px;
+        line-height: 30px;
+    }
+    
+    label[for=lastname] {
+        color: black;
+        margin-left: 90px;
+        line-height: 30px;
+    }
+    
+    label[for=email] {
+        color: black;
+        margin-left: 90px; /* need to change this lol */
+        line-height: 30px;
+    }
+    
+    label[for=password] {
+        color: black;
+        margin-left: 90px; /* this too */
+        line-height: 30px;
+    }
+    
+    .error-msg {
+        color: red;
+        text-align: center;
+    }
+    
+    .success-msg {
+        color: green;
+        text-align: center;
+        font-weight: bold;
+    }
+    
+    
+    /*VisualRefresh*/
+    h1 {
+    text-align: center;
+    margin-top:0.75em;
+    margin-bottom:0.75em;
+    color: black;
+    }
+    
+    p {
+        color: white;
+    }
+    
+    .ps_text_header { 
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    font-weight:bold;
+    color: #FFFFFF;
+    text-shadow: 3px 3px 3px #000000;
+    width:351px;
+    display:inline-block;
+    padding-bottom:14px;
+    text-align:left;
+    }
+    
+    input[type="text"], input[type="password"], input[type="fullname"],textarea {
+        margin: auto;
+        background-color : #ffffff;
+        box-shadow: 3px 3px 5px rgba(0,0,0,0.25) inset;
+        border:0.5px inset transparent;
+        border-radius:0.25em; 
+        background-clip: padding-box;
+        color: black;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 15px;
+        width: 341px;
+        padding-left: 10px;
+        padding-right: 0px;
+        padding-bottom: 0.8em;
+        padding-top: 0.8em;
+        margin-bottom: 15px;
+        box-shadow:none;
+        line-height:1.2em;
+        font-size:1em;
+        width:65%;
+        display:block;
+        border: 1px solid #ced4da;
+        box-sizing:border-box;
+        padding:0.5em;
+        border-color: #868e96; /* 859 - WCAG */
+    }
+    
+    select option {
+    background:transparent !important;  
+    background-color:#00385c; 
+    padding-left:10px;
+    margin-bottom:0.25em;
+    }
+    
+    html[dir='rtl'] select option {
+    padding-right:10px;
+    padding-left:0;
+    }
+    
+    input:hover, select:hover { 
+    border-color: rgba(0,113,192,0.5);
+    border-color: #246FC7;
+    }
+    
+    a, a:link,.ps-link,.ps-link:link {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    font-family:Arial;
+    font-size:1em;
+    color:inherit;
+    }
+    
+    label { 
+        text-decoration: none;
+        color: black;
+        font-family:Arial;
+        font-size:15px;
+        text-shadow: 2px 2px 1px #000000;
+        font-size:1em;
+        text-shadow:none;
+        color:inherit;
+    }
+    
+    
+    a:link:visited,
+    .ps-link:visited {
+    text-decoration: none;
+    color: blue;
+    color: inherit;
+    }
+    
+    a:link:hover, .ps-link:hover {
+        text-decoration: underline; 
+    }
+    
+    button[type="submit"] {
+        margin: auto;
+        background-color : #242526;
+        border:0.5px inset transparent;
+        border-radius:0.25em; 
+        background-clip: padding-box;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 15px;
+        width: 341px;
+        margin-top: 15px;
+        padding-left: 10px;
+        padding-right: 0px;
+        padding-bottom: 0.8em;
+        padding-top: 0.8em;
+        box-shadow:none;
+        line-height:1.2em;
+        font-size:1em;
+        width:65%;
+        display:block;
+        border: 1px solid #ced4da;
+        box-sizing:border-box;
+        padding:0.5em;
+        border-color: #868e96; 
+    }
+    
+#profileContainer {
+    position: relative;
+    border: solid 1px black;   
+    background-color:#ffffff;
+    overflow: hidden;
+    background-size: cover;
+    -moz-background-size: cover;
+     -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+.containerTable {
+    width: 94%;
+    position: relative;
+    top: 100px;
+    float: right;
+}
+
+.homeTable {
+    width: 100%;
+}
+
+.homeTable .label {
+    height: 133px;
+    width: 100px;
+    padding-right: 5px;
+}
+
+.homeTable td {
+    padding: 0px;
+}
+
+.homeCategory {
+    -ms-transform:rotate(-90deg);
+    -webkit-transform:rotate(-90deg);
+    -moz-transform:rotate(-90deg);
+    font: 14px helvetica, sans-serif;
+    color: #ffffff;
+    position: relative;
+    left: 10px;
+    text-shadow: 0px 1px 0px #000000;
+    text-align: center;
+    z-index: 800;
+}
+
+.homecontainer {
+    height: 190px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.tile {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    /*background-color: #E6E6E6;*/
+    text-align: center;
+    font-size: 16px;
+    z-index: 900;
+    /*opacity: 0;*/
+    -webkit-transition-property: opacity, border-radius;
+    -webkit-transition-duration: .50s;
+    -webkit-transition-timing-function: ease-out;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.75);
+    box-shadow: 2px 2px 3px 0px rgba(0,0,0,0.75);
+    filter: progid:DXImageTransform.Microsoft.Shadow(color=#303030,direction=135,strength=4);
+    overflow: visible;
+    cursor: pointer;
+}
+
+.openAppTile {
+    float: left !important;
+    /*opacity: 1 !important;*/
+    margin: 12px 20px 20px 0px;
+    position: relative !important;
+    filter: none;
+}
+
+.smallTiles .tileBgNode {
+    background-size: contain;
+}
+
+.tileBgNode {
+    height: 100%;
+    background: url(../images/MondrianTileBG2NoShadow.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    /*opacity: .9;*/
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    z-index: 100;
+}
+
+.tileSmallNode {
+    position: absolute;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 200;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: center 35%;
+}
+
+.tileImageNode {
+    height: 100%;
+    vertical-align: middle;
+    background-position: center center;
+    background-repeat: no-repeat;
+    line-height: 110px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+.tileImageNode img {
+    vertical-align: middle;
+    height: 100%;
+}
+
+.tileTitleHolder {
+    position: absolute;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 2000;
+}
+
+.tileTitleDiv {
+    position: absolute;
+    bottom: 0px;
+    height: 40px;
+    width: 100%;
+    vertical-align: middle;
+}
+
+.tileTitleDiv table {
+    height: 100%;
+    width: 100%;
+}
+
+.tileTitle {
+    font: 12px helvetica, sans-serif;
+    background-color: #0d8cc8;
+    color: #ffffff;
+    line-height: 12px;
+    text-align: center;
+    height: 40px;
+    text-shadow: 1px 1px 1px #1A1A1A;
+    padding: 0px !important;
+}
+
+.launcher {
+    top: 120px;
+    right: 64px;
+    height: 50px;
+    width: 100%;
+    position: absolute;
+    z-index: 500;
+    min-width: 550px;
+    font-size: 30px;
+}
+
+.launcherBtn {
+    width: 60px;
+    margin-left: 0px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 140px;
+    z-index: 1500;
+    cursor: pointer;
+    margin-top: -4px;
+}
+
+.launcherInfo {
+    float: right;
+    font: 25px helvetica, sans-serif;
+    background: url(../images/sca/Profile_Line.png) no-repeat center right;
+    padding-right: 20px;
+    margin-right: 11px;
+    text-align: right;
+    white-space: nowrap;
+    text-shadow: 1px -1px 2px #000000;
+    cursor: pointer;
+}
