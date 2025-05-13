@@ -127,6 +127,16 @@ h1 {
    padding-bottom: 40px;
 }
 
+.container-elemz {
+   margin-left: auto;
+   margin-right: auto;
+   margin-top: 60px;
+   background-color: #D3D3D3;
+   max-width: 750px;
+   max-height: 1000px;
+   border-top: 30px solid #084c94;
+}
+
 .container-home {
 	margin-left: auto;
 	margin-right: auto;
@@ -497,7 +507,7 @@ table .btn {
 }
 
 .day-item input[type="checkbox"] {
-    margin: 0;
+    margin-left: -20px;
 }
 
 .day-item label {
@@ -557,6 +567,10 @@ table .btn {
 .exams-list {
     flex: 0 0 50%;
     overflow-x: auto;
+}
+
+.container-elemz .exams-list {
+    flex: auto;
 }
 
 .exam-details {

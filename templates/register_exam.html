@@ -57,7 +57,7 @@
                     </div>
 
                     <div class="days-section">
-                        <div class="days-label">Days:</div>
+                        <div class="days-label" style="text-align: left;">Days:</div>
                         <div class="days-options">
                             <div class="day-item">
                                 <input type="checkbox" name="days[]" value="1" id="monday" {% if '1' in session.get('search_criteria', {}).get('days', []) %}checked{% endif %}>

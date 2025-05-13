@@ -53,7 +53,7 @@
 			       	<td>
                         {% if exam.CurrentEnrollment < exam.ExamCapacity %}
                             {% if exam_count < 3 %}
-                            <form method="POST" action="{{ url_for('register_for_exam', exam_id=exam.Exam_ID) }}">
+                            <form method="POST" action="{{ url_for('register_for_exam', exam_id=exam.Exam_ID) }}" onsubmit="return confirm('Register for this exam? You can only be registered for 3 exams at once.')">
                                 <!-- Preserve search parameters -->
                                 <input type="hidden" name="subject" value="{{ request.form.get('subject', '') }}">
                                 <input type="hidden" name="courseNum" value="{{ request.form.get('courseNum', '') }}">
